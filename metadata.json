@@ -1,0 +1,6 @@
+{
+  "name": "Regie De Leon Catacutan Portfolio",
+  "description": "Professional portfolio and interactive portfolio builder for Regie De Leon Catacutan, Computer Engineer, featuring project showcases, experience timeline, skills, and real-time editing powered by Firebase.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

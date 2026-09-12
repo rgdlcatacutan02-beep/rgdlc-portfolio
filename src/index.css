@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --font-primary: "Plus Jakarta Sans", "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: "Space Grotesk", "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  --font-tech: "Rajdhani", "JetBrains Mono", sans-serif;
+  
+  --primary-color: #004643;
+  --secondary-color: #fffffe;
+  --mix-color: #f02a2d;
+  --text-color: #1e293b;
+  --subtitle-color: #64748b;
+  --headline-color: #004643;
+  --accent-color: #028090;
+  
+  font-family: var(--font-primary);
+  color-scheme: light;
+  color: #1e293b;
+  background-color: #ffffff;
+}
+
+.dark {
+  color-scheme: dark;
+  --primary-color: #0d5c58;
+  --secondary-color: #070b14;
+  --text-color: #f1f5f9;
+  --subtitle-color: #94a3b8;
+  --headline-color: #ffffff;
+  --accent-color: #2dd4bf;
+}
+
+html, body {
+  background-color: #ffffff;
+  color: #1e293b;
+  font-family: var(--font-primary);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+html.dark, html.dark body {
+  background-color: #070b14;
+  color: #f1f5f9;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.025em;
+  font-weight: 700;
+  color: var(--headline-color);
+}
+
+.font-mono-code {
+  font-family: var(--font-mono);
+}
+
+.font-tech-heading {
+  font-family: var(--font-tech);
+}
+
+.font-heading-display {
+  font-family: var(--font-heading);
+}
+
+/* Custom modern scrollbar matching target portfolio */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #00464366 #0046430d;
+}
+
+.dark * {
+  scrollbar-color: #2dd4bf50 #070b14;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0046430a;
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #070b14;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00464359;
+  border-radius: 9999px;
+  transition: background-color 0.2s;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #02809066;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #004643a6;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #2dd4bfa6;
+}
+
+/* Marquee track animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marqueeReverse {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+.animate-marquee-reverse {
+  display: flex;
+  width: max-content;
+  animation: marqueeReverse 40s linear infinite;
+}
+
+.animate-marquee-reverse:hover {
+  animation-play-state: paused;
+}
+
+/* Float and Pulse animations */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 5s ease-in-out infinite;
+}
+
+/* Print styles */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
+  header, aside, footer, button, input, textarea, form, .no-print {
+    display: none !important;
+  }
+  .rounded-2xl, .rounded-xl {
+    border-color: #cbd5e1 !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+  }
+  h1, h2, h3, h4, strong {
+    color: #0f172a !important;
+  }
+  p, span, li {
+    color: #334155 !important;
+  }
+}

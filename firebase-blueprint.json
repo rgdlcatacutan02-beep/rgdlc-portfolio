@@ -1,0 +1,304 @@
+{
+  "entities": {
+    "PortfolioProfile": {
+      "title": "Portfolio Profile",
+      "description": "Main personal and profile information for the portfolio owner",
+      "type": "object",
+      "properties": {
+        "fullName": {
+          "type": "string",
+          "description": "Full name of the engineer",
+          "maxLength": 100
+        },
+        "title": {
+          "type": "string",
+          "description": "Professional title or role",
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "description": "Public contact email address",
+          "maxLength": 100
+        },
+        "phone": {
+          "type": "string",
+          "description": "Contact phone number",
+          "maxLength": 50
+        },
+        "location": {
+          "type": "string",
+          "description": "City and province address",
+          "maxLength": 150
+        },
+        "summary": {
+          "type": "string",
+          "description": "Comprehensive professional bio and summary",
+          "maxLength": 2000
+        },
+        "github": {
+          "type": "string",
+          "description": "GitHub profile URL",
+          "maxLength": 250
+        },
+        "linkedin": {
+          "type": "string",
+          "description": "LinkedIn profile URL",
+          "maxLength": 250
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last update"
+        }
+      },
+      "required": ["fullName", "title", "email", "summary"]
+    },
+    "Project": {
+      "title": "Project Showcase",
+      "description": "Individual portfolio project",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier",
+          "maxLength": 64
+        },
+        "title": {
+          "type": "string",
+          "description": "Project title",
+          "maxLength": 150
+        },
+        "category": {
+          "type": "string",
+          "description": "Category such as IoT, AI / ML, Web Development, Automation",
+          "maxLength": 64
+        },
+        "year": {
+          "type": "string",
+          "description": "Year or timeframe completed",
+          "maxLength": 30
+        },
+        "description": {
+          "type": "string",
+          "description": "Short project overview",
+          "maxLength": 1000
+        },
+        "highlights": {
+          "type": "string",
+          "description": "Newline or bullet separated key highlights and tech used",
+          "maxLength": 1500
+        },
+        "tags": {
+          "type": "string",
+          "description": "Comma separated technologies or tags",
+          "maxLength": 300
+        },
+        "featured": {
+          "type": "string",
+          "description": "Flag indicating if project is featured ('true' or 'false')",
+          "maxLength": 10
+        },
+        "link": {
+          "type": "string",
+          "description": "Live demo or source link",
+          "maxLength": 300
+        },
+        "order": {
+          "type": "string",
+          "description": "Ordering priority index as string",
+          "maxLength": 10
+        }
+      },
+      "required": ["id", "title", "category", "description"]
+    },
+    "Experience": {
+      "title": "Work Experience",
+      "description": "Professional employment or consulting experience",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier",
+          "maxLength": 64
+        },
+        "role": {
+          "type": "string",
+          "description": "Job title or position",
+          "maxLength": 120
+        },
+        "company": {
+          "type": "string",
+          "description": "Company or client organization",
+          "maxLength": 120
+        },
+        "period": {
+          "type": "string",
+          "description": "Employment date range",
+          "maxLength": 60
+        },
+        "responsibilities": {
+          "type": "string",
+          "description": "Bullet points or paragraph of duties and accomplishments",
+          "maxLength": 2000
+        },
+        "tools": {
+          "type": "string",
+          "description": "Key tools and technologies used",
+          "maxLength": 300
+        },
+        "order": {
+          "type": "string",
+          "description": "Display order index",
+          "maxLength": 10
+        }
+      },
+      "required": ["id", "role", "company", "period", "responsibilities"]
+    },
+    "Education": {
+      "title": "Education Record",
+      "description": "Academic background entry",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier",
+          "maxLength": 64
+        },
+        "school": {
+          "type": "string",
+          "description": "Institution name",
+          "maxLength": 150
+        },
+        "degree": {
+          "type": "string",
+          "description": "Degree or track",
+          "maxLength": 150
+        },
+        "period": {
+          "type": "string",
+          "description": "Years attended",
+          "maxLength": 50
+        },
+        "honors": {
+          "type": "string",
+          "description": "Honors or distinctions (e.g. Cum Laude)",
+          "maxLength": 200
+        },
+        "location": {
+          "type": "string",
+          "description": "School location",
+          "maxLength": 150
+        },
+        "order": {
+          "type": "string",
+          "description": "Display order",
+          "maxLength": 10
+        }
+      },
+      "required": ["id", "school", "degree", "period"]
+    },
+    "Seminar": {
+      "title": "Seminar and Certification",
+      "description": "Attended seminar, workshop, or certificate",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier",
+          "maxLength": 64
+        },
+        "title": {
+          "type": "string",
+          "description": "Seminar or training title",
+          "maxLength": 200
+        },
+        "date": {
+          "type": "string",
+          "description": "Date or period attended",
+          "maxLength": 60
+        },
+        "description": {
+          "type": "string",
+          "description": "Topics covered or details",
+          "maxLength": 500
+        },
+        "order": {
+          "type": "string",
+          "description": "Display order",
+          "maxLength": 10
+        }
+      },
+      "required": ["id", "title", "date"]
+    },
+    "ContactMessage": {
+      "title": "Contact Inquiry",
+      "description": "Message submitted by visitors",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique message ID",
+          "maxLength": 64
+        },
+        "name": {
+          "type": "string",
+          "description": "Visitor full name",
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "description": "Visitor contact email",
+          "maxLength": 100
+        },
+        "message": {
+          "type": "string",
+          "description": "Inquiry text",
+          "maxLength": 2000
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp string",
+          "maxLength": 60
+        }
+      },
+      "required": ["id", "name", "email", "message"]
+    }
+  },
+  "firestore": {
+    "/portfolio/main": {
+      "schema": {
+        "$ref": "#/entities/PortfolioProfile"
+      },
+      "description": "Singleton document storing the active portfolio profile"
+    },
+    "/projects/{projectId}": {
+      "schema": {
+        "$ref": "#/entities/Project"
+      },
+      "description": "Collection of engineering and software projects"
+    },
+    "/experiences/{experienceId}": {
+      "schema": {
+        "$ref": "#/entities/Experience"
+      },
+      "description": "Collection of work and professional experiences"
+    },
+    "/education/{educationId}": {
+      "schema": {
+        "$ref": "#/entities/Education"
+      },
+      "description": "Collection of academic background items"
+    },
+    "/seminars/{seminarId}": {
+      "schema": {
+        "$ref": "#/entities/Seminar"
+      },
+      "description": "Collection of seminars and certifications"
+    },
+    "/messages/{messageId}": {
+      "schema": {
+        "$ref": "#/entities/ContactMessage"
+      },
+      "description": "Messages sent to Regie through the portfolio contact form"
+    }
+  }
+}

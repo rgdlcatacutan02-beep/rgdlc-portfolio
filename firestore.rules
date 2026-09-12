@@ -1,0 +1,124 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner() {
+      return isSignedIn() && (
+        request.auth.token.email == 'rgdlcatacutan02@gmail.com' ||
+        request.auth.token.email_verified == true
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation for Portfolio singleton profile
+    function isValidPortfolio(data) {
+      return data.fullName is string && data.fullName.size() > 0 && data.fullName.size() <= 100 &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 100 &&
+             data.email is string && data.email.size() > 0 && data.email.size() <= 100 &&
+             data.summary is string && data.summary.size() > 0 && data.summary.size() <= 2000;
+    }
+
+    // Validation for Project document
+    function isValidProject(data) {
+      return data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 150 &&
+             data.category is string && data.category.size() > 0 && data.category.size() <= 64 &&
+             data.description is string && data.description.size() > 0 && data.description.size() <= 1000;
+    }
+
+    // Validation for Experience document
+    function isValidExperience(data) {
+      return data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
+             data.role is string && data.role.size() > 0 && data.role.size() <= 120 &&
+             data.company is string && data.company.size() > 0 && data.company.size() <= 120 &&
+             data.period is string && data.period.size() > 0 && data.period.size() <= 60 &&
+             data.responsibilities is string && data.responsibilities.size() > 0 && data.responsibilities.size() <= 2000;
+    }
+
+    // Validation for Education document
+    function isValidEducation(data) {
+      return data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
+             data.school is string && data.school.size() > 0 && data.school.size() <= 150 &&
+             data.degree is string && data.degree.size() > 0 && data.degree.size() <= 150 &&
+             data.period is string && data.period.size() > 0 && data.period.size() <= 50;
+    }
+
+    // Validation for Seminar document
+    function isValidSeminar(data) {
+      return data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 200 &&
+             data.date is string && data.date.size() > 0 && data.date.size() <= 60;
+    }
+
+    // Validation for Contact Message
+    function isValidMessage(data) {
+      return data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.email is string && data.email.size() > 0 && data.email.size() <= 100 &&
+             data.message is string && data.message.size() > 0 && data.message.size() <= 2000;
+    }
+
+    // Portfolio Profile rules
+    match /portfolio/{docId} {
+      allow read: if isValidId(docId);
+      allow create, update: if isValidId(docId) && isOwner() && isValidPortfolio(incoming());
+      allow delete: if isValidId(docId) && isOwner();
+    }
+
+    // Projects collection rules
+    match /projects/{projectId} {
+      allow read: if true;
+      allow create, update: if isValidId(projectId) && isOwner() && isValidProject(incoming());
+      allow delete: if isValidId(projectId) && isOwner();
+    }
+
+    // Work Experience collection rules
+    match /experiences/{experienceId} {
+      allow read: if true;
+      allow create, update: if isValidId(experienceId) && isOwner() && isValidExperience(incoming());
+      allow delete: if isValidId(experienceId) && isOwner();
+    }
+
+    // Education collection rules
+    match /education/{educationId} {
+      allow read: if true;
+      allow create, update: if isValidId(educationId) && isOwner() && isValidEducation(incoming());
+      allow delete: if isValidId(educationId) && isOwner();
+    }
+
+    // Seminars collection rules
+    match /seminars/{seminarId} {
+      allow read: if true;
+      allow create, update: if isValidId(seminarId) && isOwner() && isValidSeminar(incoming());
+      allow delete: if isValidId(seminarId) && isOwner();
+    }
+
+    // Contact messages rules
+    match /messages/{messageId} {
+      allow read: if isOwner();
+      allow create: if isValidId(messageId) && isValidMessage(incoming());
+      allow update, delete: if isValidId(messageId) && isOwner();
+    }
+  }
+}

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catacutan | Portfolio</title>
+    <meta name="description" content="Professional portfolio for Regie De Leon Catacutan, Computer Engineer & IT Professional, featuring project showcases, experience roadmap, skills, and interactive developer deck." />
+    <meta property="og:title" content="Catacutan | Portfolio" />
+    <meta property="og:description" content="Professional portfolio for Regie De Leon Catacutan, Computer Engineer & IT Professional." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      (function() {
+        try {
+          const stored = localStorage.getItem('portfolio_theme');
+          const isDark = stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (_) {}
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400..800;1,400..800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Rajdhani:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-[#ffffff] dark:bg-[#070b14] text-[#1e293b] dark:text-[#f1f5f9] antialiased selection:bg-[#004643]/20 selection:text-[#004643] dark:selection:bg-[#028090]/30 dark:selection:text-[#2dd4bf] min-h-screen">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
