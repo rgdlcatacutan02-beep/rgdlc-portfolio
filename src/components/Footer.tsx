@@ -73,7 +73,8 @@ export const Footer: React.FC<FooterProps> = ({
             <a href="#projects" className="hover:text-[#004643] dark:hover:text-[#2dd4bf] font-medium transition-colors">Projects</a>
             <a href="#experience" className="hover:text-[#004643] dark:hover:text-[#2dd4bf] font-medium transition-colors">Roadmap</a>
             <a href="#skills" className="hover:text-[#004643] dark:hover:text-[#2dd4bf] font-medium transition-colors">Skills</a>
-            <a href="#seminars" className="hover:text-[#004643] dark:hover:text-[#2dd4bf] font-medium transition-colors">Credentials</a>
+            <a href="#certificates" className="hover:text-[#004643] dark:hover:text-[#2dd4bf] font-medium transition-colors">Certificates</a>
+            <a href="#seminars" className="hover:text-[#004643] dark:hover:text-[#2dd4bf] font-medium transition-colors">Seminars</a>
             <a href="#education" className="hover:text-[#004643] dark:hover:text-[#2dd4bf] font-medium transition-colors">Education</a>
             <a href="#contact" className="hover:text-[#004643] dark:hover:text-[#2dd4bf] font-medium transition-colors">Contact</a>
             

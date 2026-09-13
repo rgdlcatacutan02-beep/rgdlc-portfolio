@@ -34,7 +34,7 @@ export const SeminarsSection: React.FC<SeminarsSectionProps> = ({
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#004643]/10 dark:bg-[#2dd4bf]/10 text-[#004643] dark:text-[#2dd4bf] text-xs font-mono-code font-bold uppercase tracking-wider mb-3">
               <Terminal className="w-3.5 h-3.5 text-[#028090] dark:text-[#2dd4bf]" />
-              <span>// 05 . CREDENTIALS &amp; SEMINARS</span>
+              <span>// 06 . SEMINARS &amp; LEARNING</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#004643] dark:text-white font-['Space_Grotesk']">
               Seminars &amp; Continuous Learning

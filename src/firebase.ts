@@ -79,7 +79,7 @@ export function handleFirestoreError(
 // Test connection on boot
 export async function testConnection(): Promise<boolean> {
   try {
-    await getDocFromServer(doc(db, 'test', 'connection'));
+    await getDocFromServer(doc(db, 'portfolio', 'main'));
     return true;
   } catch (error) {
     if (error instanceof Error && error.message.includes('the client is offline')) {
@@ -102,6 +102,16 @@ export async function loginWithGoogle(): Promise<User> {
 
 export async function logoutUser(): Promise<void> {
   await signOut(auth);
+}
+
+export const AUTHORIZED_OWNER_EMAIL = 'rgdlcatacutan02@gmail.com';
+
+export function isAuthorizedOwner(user: User | null): boolean {
+  if (!user || !user.email) return false;
+  return (
+    user.email.trim().toLowerCase() === AUTHORIZED_OWNER_EMAIL.toLowerCase() &&
+    Boolean(user.emailVerified)
+  );
 }
 
 export { onAuthStateChanged };

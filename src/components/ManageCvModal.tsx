@@ -254,7 +254,7 @@ export const ManageCvModal: React.FC<ManageCvModalProps> = ({
                   {readingFile ? 'Reading and encoding PDF file...' : 'Click to select or drag and drop a PDF file'}
                 </p>
                 <p className="text-[11px] text-slate-500">
-                  Standard format (.pdf up to 4MB). Fits directly in your portfolio cloud database.
+                  Standard format (.pdf up to 750KB). Fits directly in your portfolio cloud database.
                 </p>
               </div>
             </div>

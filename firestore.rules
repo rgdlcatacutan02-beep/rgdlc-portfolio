@@ -13,10 +13,9 @@ service cloud.firestore {
     }
 
     function isOwner() {
-      return isSignedIn() && (
-        request.auth.token.email == 'rgdlcatacutan02@gmail.com' ||
-        request.auth.token.email_verified == true
-      );
+      return isSignedIn() &&
+             request.auth.token.email == 'rgdlcatacutan02@gmail.com' &&
+             request.auth.token.email_verified == true;
     }
 
     function isValidId(id) {
@@ -73,15 +72,18 @@ service cloud.firestore {
 
     // Validation for Contact Message
     function isValidMessage(data) {
-      return data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
+      return data.keys().hasOnly(['id', 'name', 'email', 'message', 'createdAt']) &&
+             data.id is string && data.id.size() > 0 && data.id.size() <= 64 &&
              data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
              data.email is string && data.email.size() > 0 && data.email.size() <= 100 &&
-             data.message is string && data.message.size() > 0 && data.message.size() <= 2000;
+             data.email.matches('^[^@]+@[^@]+\\.[a-zA-Z]{2,}$') &&
+             data.message is string && data.message.size() > 0 && data.message.size() <= 2000 &&
+             (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 50));
     }
 
     // Portfolio Profile rules
     match /portfolio/{docId} {
-      allow read: if isValidId(docId);
+      allow read: if isValidId(docId) && docId != 'security';
       allow create, update: if isValidId(docId) && isOwner() && isValidPortfolio(incoming());
       allow delete: if isValidId(docId) && isOwner();
     }
@@ -112,6 +114,18 @@ service cloud.firestore {
       allow read: if true;
       allow create, update: if isValidId(seminarId) && isOwner() && isValidSeminar(incoming());
       allow delete: if isValidId(seminarId) && isOwner();
+    }
+
+    // Skills collection rules
+    match /skills/{skillId} {
+      allow read: if true;
+      allow create, update, delete: if isValidId(skillId) && isOwner();
+    }
+
+    // Certificates collection rules
+    match /certificates/{certId} {
+      allow read: if true;
+      allow create, update, delete: if isValidId(certId) && isOwner();
     }
 
     // Contact messages rules

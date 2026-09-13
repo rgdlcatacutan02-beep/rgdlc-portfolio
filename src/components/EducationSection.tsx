@@ -42,7 +42,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#004643]/10 dark:bg-[#2dd4bf]/10 text-[#004643] dark:text-[#2dd4bf] text-xs font-mono-code font-bold uppercase tracking-wider mb-3">
               <Terminal className="w-3.5 h-3.5 text-[#028090] dark:text-[#2dd4bf]" />
-              <span>// 06 . ACADEMIC FORMATION</span>
+              <span>// 07 . ACADEMIC FORMATION</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#004643] dark:text-white font-['Space_Grotesk']">
               Education &amp; Academic Honors
@@ -76,7 +76,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
 
         {/* Civil Service Eligibility / HGE Verified Showcase Card */}
         {eligibility && (eligibility.enabled ?? true) && (
-          <div className="mb-10 rounded-2xl border border-emerald-500/40 dark:border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-white to-teal-500/5 dark:from-emerald-950/40 dark:via-slate-900/90 dark:to-slate-900 p-6 sm:p-8 shadow-sm space-y-4 relative overflow-hidden">
+          <div className="mb-10 rounded-2xl border border-emerald-500/40 dark:border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-white to-teal-500/5 dark:from-emerald-950/40 dark:via-slate-900/90 dark:to-slate-900 p-6 sm:p-8 shadow-sm hover:shadow-xl hover:border-emerald-500/60 dark:hover:border-emerald-400/50 transition-all duration-300 space-y-4 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 dark:bg-emerald-400/5 rounded-full blur-3xl pointer-events-none" />
             
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 relative">
@@ -157,7 +157,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
           {education.map((item) => (
             <div
               key={item.id}
-              className="relative rounded-2xl border border-slate-200/90 dark:border-slate-800/80 bg-[#fffffe] dark:bg-slate-900/80 hover:border-[#004643]/40 dark:hover:border-[#2dd4bf]/40 p-6 sm:p-8 space-y-4 transition-all shadow-sm hover:shadow-md"
+              className="relative rounded-2xl border border-slate-200/90 dark:border-slate-800/80 bg-[#fffffe] dark:bg-slate-900/80 hover:border-[#004643]/40 dark:hover:border-[#2dd4bf]/40 hover:-translate-y-1 hover:shadow-xl p-6 sm:p-8 space-y-4 transition-all duration-300 shadow-sm"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1.5">

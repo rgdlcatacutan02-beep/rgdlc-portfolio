@@ -14,8 +14,15 @@ import {
   Maximize2,
   Layers,
   ArrowUpRight,
+  Github,
+  Crown,
+  GripVertical,
+  ChevronLeft,
+  ChevronRight,
+  Save,
 } from 'lucide-react';
 import { ProjectItem } from '../types';
+import { sanitizeUrl } from '../utils/fileUtils';
 
 interface ProjectsSectionProps {
   projects: ProjectItem[];
@@ -23,6 +30,9 @@ interface ProjectsSectionProps {
   onAddProject: () => void;
   onEditProject: (project: ProjectItem) => void;
   onDeleteProject: (projectId: string) => void;
+  onReorderProjects?: (newProjects: ProjectItem[]) => void;
+  onSetSpotlightProject?: (projectId: string) => void;
+  onSaveOrder?: () => Promise<void>;
 }
 
 export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
@@ -31,10 +41,100 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   onAddProject,
   onEditProject,
   onDeleteProject,
+  onReorderProjects,
+  onSetSpotlightProject,
+  onSaveOrder,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeModalProject, setActiveModalProject] = useState<ProjectItem | null>(null);
+
+  // Drag and drop state
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    setDraggedId(id);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', id);
+  };
+
+  const handleDragOver = (e: React.DragEvent, id: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (dragOverId !== id) {
+      setDragOverId(id);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent, id: string) => {
+    if (dragOverId === id) {
+      setDragOverId(null);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    setDragOverId(null);
+    const sourceId = draggedId || e.dataTransfer.getData('text/plain');
+    if (!sourceId || sourceId === targetId) {
+      setDraggedId(null);
+      return;
+    }
+
+    const sourceIndex = projects.findIndex((p) => p.id === sourceId);
+    const targetIndex = projects.findIndex((p) => p.id === targetId);
+    if (sourceIndex === -1 || targetIndex === -1) {
+      setDraggedId(null);
+      return;
+    }
+
+    const updated = [...projects];
+    const [moved] = updated.splice(sourceIndex, 1);
+    updated.splice(targetIndex, 0, moved);
+
+    setDraggedId(null);
+    if (onReorderProjects) {
+      onReorderProjects(updated);
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggedId(null);
+    setDragOverId(null);
+  };
+
+  const handleMoveProject = (sourceIndex: number, direction: 'left' | 'right') => {
+    const targetIndex = direction === 'left' ? sourceIndex - 1 : sourceIndex + 1;
+    if (targetIndex < 0 || targetIndex >= projects.length) return;
+    const updated = [...projects];
+    const [moved] = updated.splice(sourceIndex, 1);
+    updated.splice(targetIndex, 0, moved);
+    if (onReorderProjects) {
+      onReorderProjects(updated);
+    }
+  };
+
+  // Manual save state
+  const [isSavingOrder, setIsSavingOrder] = useState<boolean>(false);
+  const [justSavedOrder, setJustSavedOrder] = useState<boolean>(false);
+
+  const handleManualSaveOrder = async () => {
+    setIsSavingOrder(true);
+    try {
+      if (onSaveOrder) {
+        await onSaveOrder();
+      } else if (onReorderProjects) {
+        await onReorderProjects(projects);
+      }
+      setJustSavedOrder(true);
+      setTimeout(() => setJustSavedOrder(false), 3500);
+    } catch (err) {
+      console.error('Failed to save project order manually:', err);
+    } finally {
+      setIsSavingOrder(false);
+    }
+  };
 
   // Extract unique categories
   const categories = ['All', ...Array.from(new Set(projects.map((p) => p.category)))];
@@ -56,7 +156,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         
         {/* Header with Eyebrow Badge & Admin Controls */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#004643]/10 dark:bg-[#028090]/20 text-[#004643] dark:text-[#2dd4bf] text-xs font-mono-code font-bold uppercase tracking-wider mb-3">
               <Terminal className="w-3.5 h-3.5 text-[#028090] dark:text-[#2dd4bf]" />
@@ -81,6 +181,62 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
           )}
         </div>
 
+        {/* Reordering Admin Guidance & Save Order Button */}
+        {isEditMode && (
+          <div className="mb-6 rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-emerald-500/5 to-[#028090]/10 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs shadow-sm animate-in fade-in duration-300">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 shrink-0 shadow-inner">
+                <Crown className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                  <span>Showcase Spotlight &amp; Drag-and-Drop Positioning Active</span>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[10px] font-mono-code font-bold">READY</span>
+                </p>
+                <p className="text-slate-600 dark:text-slate-300 text-xs mt-0.5">
+                  The <strong>1st project</strong> in the portfolio is automatically showcased as the <strong>Large Spotlight Card</strong> (2-column banner).
+                  Drag any card using its <span className="font-mono-code text-[11px] font-bold">⠿ grip handle</span>, click <strong className="text-amber-600 dark:text-amber-400">&quot;👑 Set as Spotlight&quot;</strong>, or click <strong>&quot;Save Order&quot;</strong>.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5 self-end sm:self-center shrink-0">
+              {selectedCategory !== 'All' ? (
+                <button
+                  onClick={() => setSelectedCategory('All')}
+                  className="px-3.5 py-2 rounded-xl bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 transition-all text-xs shadow"
+                >
+                  Switch to &quot;All&quot; to Drag &amp; Reorder
+                </button>
+              ) : (
+                <button
+                  onClick={handleManualSaveOrder}
+                  disabled={isSavingOrder}
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs shadow-md transition-all active:scale-95 cursor-pointer disabled:opacity-75"
+                  title="Save current project order to storage and cloud"
+                >
+                  {justSavedOrder ? (
+                    <>
+                      <CheckCircle className="w-4 h-4 text-slate-950" />
+                      <span>Order Saved to Cloud!</span>
+                    </>
+                  ) : isSavingOrder ? (
+                    <>
+                      <span className="w-3.5 h-3.5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                      <span>Saving Order...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4 text-slate-950" />
+                      <span>Save Order</span>
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Category Filters and Search */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8">
           <div className="flex flex-wrap items-center gap-2">
@@ -88,10 +244,10 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
+                className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
                   selectedCategory === cat
                     ? 'bg-[#004643] dark:bg-[#028090] text-white shadow-sm'
-                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-[#004643]/30 dark:hover:border-[#028090]/40 hover:text-[#004643] dark:hover:text-white'
+                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-[#004643]/30 dark:hover:border-[#028090]/40 hover:text-[#004643] dark:hover:text-white hover:-translate-y-0.5 hover:shadow-sm'
                 }`}
               >
                 {cat}
@@ -125,18 +281,77 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
               const tagsList = project.tags
                 ? project.tags.split(',').map((t) => t.trim()).filter(Boolean)
                 : [];
+              const globalIndex = projects.findIndex((p) => p.id === project.id);
               const isMaster = index === 0 && selectedCategory === 'All';
+              const isDragging = draggedId === project.id;
+              const isOver = dragOverId === project.id && !isDragging;
 
               return (
                 <div
                   key={project.id}
-                  className={`group relative flex flex-col justify-between rounded-2xl border transition-all duration-300 bg-white dark:bg-slate-900/80 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 ${
+                  draggable={isEditMode && selectedCategory === 'All'}
+                  onDragStart={(e) => handleDragStart(e, project.id)}
+                  onDragOver={(e) => handleDragOver(e, project.id)}
+                  onDragLeave={(e) => handleDragLeave(e, project.id)}
+                  onDrop={(e) => handleDrop(e, project.id)}
+                  onDragEnd={handleDragEnd}
+                  className={`group relative flex flex-col justify-between rounded-2xl border transition-all duration-300 bg-white dark:bg-slate-900/80 overflow-hidden shadow-sm hover:shadow-xl ${
+                    isDragging
+                      ? 'opacity-40 scale-[0.98] border-dashed border-cyan-500 ring-2 ring-cyan-500/50'
+                      : ''
+                  } ${
+                    isOver
+                      ? 'ring-2 ring-[#028090] dark:ring-[#2dd4bf] border-[#028090] scale-[1.01] bg-teal-500/5'
+                      : ''
+                  } ${
                     isMaster
-                      ? 'border-[#004643]/40 dark:border-[#028090]/50 md:col-span-2 lg:col-span-2 shadow-md'
-                      : 'border-slate-200/90 dark:border-slate-800 hover:border-[#004643]/30 dark:hover:border-[#028090]/40'
+                      ? 'border-[#004643]/40 dark:border-[#028090]/50 md:col-span-2 lg:col-span-2 shadow-md hover:-translate-y-1'
+                      : 'border-slate-200/90 dark:border-slate-800 hover:border-[#004643]/30 dark:hover:border-[#028090]/40 hover:-translate-y-1'
                   }`}
                 >
                   <div>
+                    {/* Admin Drag & Spotlight Toolbar */}
+                    {isEditMode && (
+                      <div
+                        className={`px-4 py-2 border-b flex items-center justify-between text-xs transition-colors select-none ${
+                          isMaster
+                            ? 'bg-gradient-to-r from-amber-500/15 via-emerald-500/10 to-[#028090]/15 border-amber-500/30 dark:border-amber-500/20 text-amber-800 dark:text-amber-200'
+                            : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200/80 dark:border-slate-800 text-slate-600 dark:text-slate-300'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {selectedCategory === 'All' && (
+                            <div
+                              className="cursor-grab active:cursor-grabbing p-1 -ml-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                              title="Click and drag to reposition project"
+                            >
+                              <GripVertical className="w-4 h-4" />
+                            </div>
+                          )}
+                          {isMaster ? (
+                            <span className="inline-flex items-center gap-1.5 font-bold font-mono-code text-[11px] text-amber-700 dark:text-amber-300">
+                              <Crown className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                              <span>PRIMARY SPOTLIGHT (LARGE HERO CARD)</span>
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => onSetSpotlightProject?.(project.id)}
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 font-bold text-[11px] border border-amber-500/30 transition-all active:scale-95 cursor-pointer shadow-sm"
+                              title="Promote to position #1 (Featured as the Large Showcase Card)"
+                            >
+                              <Crown className="w-3.5 h-3.5 text-amber-500" />
+                              <span>Set as Spotlight</span>
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-1.5 font-mono-code text-[11px] text-slate-400 dark:text-slate-500">
+                          <span>Pos #{globalIndex + 1}</span>
+                        </div>
+                      </div>
+                    )}
+
                     {/* Project Banner / Thumbnail */}
                     {project.imageUrl ? (
                       <div
@@ -168,7 +383,13 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-[#004643]/10 dark:bg-[#028090]/20 text-[#004643] dark:text-[#2dd4bf] text-[11px] font-mono-code font-bold">
                             {project.category}
                           </span>
-                          {project.featured === 'true' && (
+                          {isMaster && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/40 border border-amber-300/70 dark:border-amber-600/70 text-amber-800 dark:text-amber-300 text-[10px] font-mono-code font-bold shadow-sm">
+                              <Crown className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />
+                              SPOTLIGHT HERO
+                            </span>
+                          )}
+                          {project.featured === 'true' && !isMaster && (
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-700/60 text-amber-800 dark:text-amber-300 text-[10px] font-mono-code font-bold">
                               <Sparkles className="w-2.5 h-2.5 text-amber-500" />
                               FEATURED
@@ -223,7 +444,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setActiveModalProject(project)}
-                        className="inline-flex items-center gap-1 text-xs font-bold text-[#004643] dark:text-[#2dd4bf] hover:text-[#028090] dark:hover:text-white transition-colors"
+                        className="inline-flex items-center gap-1 text-xs font-bold text-[#004643] dark:text-[#2dd4bf] hover:text-[#028090] dark:hover:text-white hover:translate-x-0.5 transition-all duration-200"
                       >
                         <span>Inspect Specs</span>
                         <ArrowUpRight className="w-3.5 h-3.5" />
@@ -231,19 +452,45 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
 
                       {project.link && (
                         <a
-                          href={project.link}
+                          href={sanitizeUrl(project.link)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors ml-2"
+                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:-translate-y-0.5 transition-all duration-200 ml-2"
                         >
-                          <ExternalLink className="w-3.5 h-3.5" />
-                          <span>Demo</span>
+                          {project.link.includes('github.com') ? (
+                            <Github className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
+                          ) : (
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          )}
+                          <span>{project.link.includes('github.com') ? 'GitHub' : 'Demo'}</span>
                         </a>
                       )}
                     </div>
 
                     {isEditMode && (
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1">
+                        {selectedCategory === 'All' && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => handleMoveProject(globalIndex, 'left')}
+                              disabled={globalIndex === 0}
+                              className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-xs"
+                              title="Move Earlier (Up in Order)"
+                            >
+                              <ChevronLeft className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleMoveProject(globalIndex, 'right')}
+                              disabled={globalIndex === projects.length - 1}
+                              className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-xs"
+                              title="Move Later (Down in Order)"
+                            >
+                              <ChevronRight className="w-3.5 h-3.5" />
+                            </button>
+                          </>
+                        )}
                         <button
                           onClick={() => onEditProject(project)}
                           className="p-1.5 rounded-lg border border-amber-200 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 hover:bg-amber-100 transition-colors text-xs"
@@ -312,10 +559,16 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
               )}
 
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs text-[#028090] dark:text-[#2dd4bf] font-mono-code font-bold">
+                <div className="flex items-center gap-2 text-xs text-[#028090] dark:text-[#2dd4bf] font-mono-code font-bold flex-wrap">
                   <span>{activeModalProject.category}</span>
                   <span>•</span>
                   <span>{activeModalProject.year}</span>
+                  {activeModalProject.role && (
+                    <>
+                      <span>•</span>
+                      <span className="text-slate-500 dark:text-slate-400">{activeModalProject.role}</span>
+                    </>
+                  )}
                 </div>
                 <h3 className="text-2xl font-bold text-[#004643] dark:text-white font-['Space_Grotesk']">
                   {activeModalProject.title}
@@ -379,16 +632,33 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
             </div>
 
             {/* Modal Footer */}
-            <div className="px-6 py-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0">
+            <div className="px-6 py-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 gap-3 flex-wrap">
               <span className="text-xs font-mono-code text-slate-400 dark:text-slate-500">
                 Regie De Leon Catacutan Portfolio
               </span>
-              <button
-                onClick={() => setActiveModalProject(null)}
-                className="px-4 py-1.5 rounded-full bg-[#004643] dark:bg-[#028090] text-white text-xs font-bold hover:bg-[#028090] transition-colors"
-              >
-                Close Window
-              </button>
+              <div className="flex items-center gap-2">
+                {activeModalProject.link && (
+                  <a
+                    href={sanitizeUrl(activeModalProject.link)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-200/80 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold transition-colors shadow-sm"
+                  >
+                    {activeModalProject.link.includes('github.com') ? (
+                      <Github className="w-3.5 h-3.5" />
+                    ) : (
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    )}
+                    <span>{activeModalProject.link.includes('github.com') ? 'View on GitHub' : 'Live Demo'}</span>
+                  </a>
+                )}
+                <button
+                  onClick={() => setActiveModalProject(null)}
+                  className="px-4 py-1.5 rounded-full bg-[#004643] dark:bg-[#028090] text-white text-xs font-bold hover:bg-[#028090] transition-colors"
+                >
+                  Close Window
+                </button>
+              </div>
             </div>
 
           </div>

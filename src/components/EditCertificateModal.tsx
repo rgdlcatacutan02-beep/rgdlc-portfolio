@@ -17,6 +17,7 @@ import {
 import { CertificateItem } from '../types';
 import { defaultCertificateCategories } from '../defaultData';
 import { readPdfAsBase64, openPdfPreview } from '../utils/fileUtils';
+import { compressAndEncodeImage } from '../utils/imageUtils';
 
 interface EditCertificateModalProps {
   certificate: CertificateItem | null;
@@ -122,12 +123,21 @@ export const EditCertificateModal: React.FC<EditCertificateModalProps> = ({
     try {
       setUploading(true);
       setError('');
-      const base64Data = await readPdfAsBase64(file);
-      setFormData((prev) => ({ ...prev, credentialUrl: base64Data }));
-      setFileMeta({
-        name: file.name,
-        size: `${(file.size / 1024).toFixed(1)} KB`,
-      });
+      if (file.type.startsWith('image/')) {
+        const compressed = await compressAndEncodeImage(file, 1400, 1400, 0.85);
+        setFormData((prev) => ({ ...prev, credentialUrl: compressed }));
+        setFileMeta({
+          name: file.name,
+          size: `${(file.size / 1024).toFixed(1)} KB (Image)`,
+        });
+      } else {
+        const parsed = await readPdfAsBase64(file);
+        setFormData((prev) => ({ ...prev, credentialUrl: parsed.dataUrl }));
+        setFileMeta({
+          name: file.name,
+          size: parsed.fileSize,
+        });
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to read file');
     } finally {

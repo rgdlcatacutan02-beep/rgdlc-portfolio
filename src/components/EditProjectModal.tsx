@@ -29,6 +29,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
     link: '',
     imageUrl: '',
     featured: 'false',
+    order: '',
   });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -52,6 +53,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
         link: '',
         imageUrl: '',
         featured: 'false',
+        order: '',
       });
     }
     setError('');
@@ -88,7 +90,16 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
       await onSave(formData);
       onClose();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to save project');
+      let msg = 'Failed to save project';
+      if (err instanceof Error) {
+        try {
+          const parsed = JSON.parse(err.message);
+          msg = parsed.error || err.message;
+        } catch {
+          msg = err.message;
+        }
+      }
+      setError(msg);
     } finally {
       setSaving(false);
     }
@@ -281,9 +292,9 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="font-semibold text-slate-300">Project / Demo Link (Optional)</label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="space-y-1 sm:col-span-1">
+              <label className="font-semibold text-slate-300">Project Link</label>
               <input
                 type="url"
                 placeholder="https://..."
@@ -293,14 +304,31 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
               />
             </div>
             <div className="space-y-1">
-              <label className="font-semibold text-slate-300">Featured Showcase?</label>
+              <label className="font-semibold text-slate-300">Featured Tag</label>
               <select
                 value={formData.featured || 'false'}
                 onChange={(e) => setFormData({ ...formData, featured: e.target.value })}
                 className="w-full rounded-xl border border-slate-800 bg-slate-950 p-2.5 text-slate-100 focus:border-cyan-500 focus:outline-none"
               >
-                <option value="false">Standard Project</option>
-                <option value="true">Featured Flagship Project</option>
+                <option value="false">Standard Tag</option>
+                <option value="true">Featured Flagship</option>
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="font-semibold text-slate-300">Showcase Layout</label>
+              <select
+                value={formData.order === '1' ? 'spotlight' : 'standard'}
+                onChange={(e) => {
+                  if (e.target.value === 'spotlight') {
+                    setFormData({ ...formData, order: '1', featured: 'true' });
+                  } else {
+                    setFormData({ ...formData, order: formData.order === '1' ? '99' : formData.order });
+                  }
+                }}
+                className="w-full rounded-xl border border-slate-800 bg-slate-950 p-2.5 text-slate-100 focus:border-cyan-500 focus:outline-none"
+              >
+                <option value="standard">Standard Grid Card</option>
+                <option value="spotlight">👑 Spotlight Hero (Large)</option>
               </select>
             </div>
           </div>

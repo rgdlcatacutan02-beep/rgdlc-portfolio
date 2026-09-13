@@ -55,7 +55,7 @@ export const SkillsBanner: React.FC = () => {
               return (
                 <div
                   key={`${skill.name}-${index}`}
-                  className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm hover:border-[#004643]/40 dark:hover:border-[#028090]/50 hover:shadow-md transition-all group shrink-0"
+                  className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm hover:border-[#028090] dark:hover:border-[#2dd4bf] hover:shadow-lg hover:shadow-[#028090]/10 hover:-translate-y-0.5 hover:scale-[1.03] transition-all duration-200 group shrink-0 cursor-default"
                 >
                   <div className="p-1 rounded-md bg-[#004643]/5 dark:bg-[#004643]/30 text-[#004643] dark:text-[#2dd4bf] group-hover:bg-[#004643] dark:group-hover:bg-[#028090] group-hover:text-white transition-colors">
                     <Icon className="w-4 h-4" />
@@ -80,7 +80,7 @@ export const SkillsBanner: React.FC = () => {
               return (
                 <div
                   key={`${skill.name}-${index}`}
-                  className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm hover:border-[#028090]/40 dark:hover:border-[#028090]/50 hover:shadow-md transition-all group shrink-0"
+                  className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm hover:border-[#028090] dark:hover:border-[#2dd4bf] hover:shadow-lg hover:shadow-[#028090]/10 hover:-translate-y-0.5 hover:scale-[1.03] transition-all duration-200 group shrink-0 cursor-default"
                 >
                   <div className="p-1 rounded-md bg-[#028090]/5 dark:bg-[#028090]/30 text-[#028090] dark:text-[#2dd4bf] group-hover:bg-[#028090] group-hover:text-white transition-colors">
                     <Icon className="w-4 h-4" />

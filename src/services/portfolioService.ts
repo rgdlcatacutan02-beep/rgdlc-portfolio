@@ -8,7 +8,7 @@ import {
   query,
   orderBy,
 } from 'firebase/firestore';
-import { db, OperationType, handleFirestoreError } from '../firebase';
+import { db, auth, OperationType, handleFirestoreError } from '../firebase';
 import {
   PortfolioProfile,
   ProjectItem,
@@ -32,7 +32,43 @@ import {
 const PORTFOLIO_DOC = 'portfolio/main';
 const PROFILE_STORAGE_KEY = 'rg_portfolio_profile';
 const PROJECTS_STORAGE_KEY = 'rg_portfolio_projects';
+const EXPERIENCES_STORAGE_KEY = 'rg_portfolio_experiences';
+const EDUCATION_STORAGE_KEY = 'rg_portfolio_education';
+const SEMINARS_STORAGE_KEY = 'rg_portfolio_seminars';
 const CERTIFICATES_STORAGE_KEY = 'rg_portfolio_certificates';
+
+/**
+ * Robust cloud sync helper:
+ * - If running in local admin session (auth.currentUser == null), gracefully bypasses
+ *   remote Firestore writes without triggering 'permission-denied' security errors.
+ * - If authenticated via Firebase/Google, performs remote write with graceful fallback.
+ */
+async function syncToFirestore(
+  writeFn: () => Promise<void>,
+  operationType: OperationType,
+  path: string,
+  entityName: string
+): Promise<void> {
+  if (!auth.currentUser) {
+    console.info(`[Local Admin] Stored ${entityName} in browser storage. Sign in with Google to sync with Cloud Firestore.`);
+    return;
+  }
+
+  try {
+    await writeFn();
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    if (
+      msg.includes('Missing or insufficient permissions') ||
+      msg.includes('permission-denied') ||
+      msg.includes('PERMISSION_DENIED')
+    ) {
+      console.warn(`[Firestore Sync] Cloud permission denied for ${path}. Data is safely preserved in local storage.`);
+      return;
+    }
+    handleFirestoreError(error, operationType, path);
+  }
+}
 
 // Fetch Profile
 export async function getPortfolioProfile(): Promise<PortfolioProfile> {
@@ -42,6 +78,9 @@ export async function getPortfolioProfile(): Promise<PortfolioProfile> {
     if (local) {
       const parsed = JSON.parse(local);
       if (parsed.fullName) {
+        if (!parsed.github || parsed.github === 'https://github.com') {
+          parsed.github = defaultProfile.github;
+        }
         return { ...defaultProfile, ...parsed };
       }
     }
@@ -55,6 +94,9 @@ export async function getPortfolioProfile(): Promise<PortfolioProfile> {
     const snap = await getDoc(docRef);
     if (snap.exists()) {
       const merged = { ...defaultProfile, ...(snap.data() as PortfolioProfile) };
+      if (!merged.github || merged.github === 'https://github.com') {
+        merged.github = defaultProfile.github;
+      }
       localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(merged));
       return merged;
     }
@@ -81,12 +123,8 @@ export async function updatePortfolioProfile(profile: PortfolioProfile): Promise
 
   // Sync to Firestore
   const path = 'portfolio';
-  try {
-    const docRef = doc(db, path, 'main');
-    await setDoc(docRef, updated);
-  } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, PORTFOLIO_DOC);
-  }
+  const docRef = doc(db, path, 'main');
+  await syncToFirestore(() => setDoc(docRef, updated), OperationType.WRITE, PORTFOLIO_DOC, 'portfolio profile');
 }
 
 // Fetch Projects
@@ -97,6 +135,23 @@ export async function getProjects(): Promise<ProjectItem[]> {
     if (local) {
       const parsed = JSON.parse(local);
       if (Array.isArray(parsed) && parsed.length > 0) {
+        let changed = false;
+        // Merge in any newly added default projects or links
+        for (const def of defaultProjects) {
+          const existingIdx = parsed.findIndex((it: ProjectItem) => it.id === def.id);
+          if (existingIdx === -1) {
+            parsed.push(def);
+            changed = true;
+          } else {
+            if (!parsed[existingIdx].link && def.link) {
+              parsed[existingIdx].link = def.link;
+              changed = true;
+            }
+          }
+        }
+        if (changed) {
+          localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(parsed));
+        }
         return parsed.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));
       }
     }
@@ -115,8 +170,11 @@ export async function getProjects(): Promise<ProjectItem[]> {
       });
       // Ensure any newly added default projects are merged in
       for (const def of defaultProjects) {
-        if (!items.some((it) => it.id === def.id)) {
+        const existingIdx = items.findIndex((it) => it.id === def.id);
+        if (existingIdx === -1) {
           items.push(def);
+        } else if (!items[existingIdx].link && def.link) {
+          items[existingIdx].link = def.link;
         }
       }
       const sorted = items.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));
@@ -149,12 +207,8 @@ export async function upsertProject(project: ProjectItem): Promise<void> {
   }
 
   const path = `projects/${project.id}`;
-  try {
-    const docRef = doc(db, 'projects', project.id);
-    await setDoc(docRef, project, { merge: true });
-  } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, path);
-  }
+  const docRef = doc(db, 'projects', project.id);
+  await syncToFirestore(() => setDoc(docRef, project, { merge: true }), OperationType.WRITE, path, `project ${project.title}`);
 }
 
 // Delete Project
@@ -168,16 +222,44 @@ export async function removeProject(projectId: string): Promise<void> {
   }
 
   const path = `projects/${projectId}`;
+  const docRef = doc(db, 'projects', projectId);
+  await syncToFirestore(() => deleteDoc(docRef), OperationType.DELETE, path, `project ${projectId}`);
+}
+
+// Save Reordered Projects
+export async function saveProjectsOrder(reordered: ProjectItem[]): Promise<void> {
+  const updated = reordered.map((p, idx) => ({
+    ...p,
+    order: String(idx + 1),
+  }));
+
   try {
-    const docRef = doc(db, 'projects', projectId);
-    await deleteDoc(docRef);
-  } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, path);
+    localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(updated));
+  } catch (err) {
+    console.warn('Could not save reordered projects to localStorage:', err);
+  }
+
+  for (const proj of updated) {
+    const path = `projects/${proj.id}`;
+    const docRef = doc(db, 'projects', proj.id);
+    await syncToFirestore(() => setDoc(docRef, proj, { merge: true }), OperationType.WRITE, path, `reorder project ${proj.title}`);
   }
 }
 
 // Fetch Experiences
 export async function getExperiences(): Promise<ExperienceItem[]> {
+  try {
+    const local = localStorage.getItem(EXPERIENCES_STORAGE_KEY);
+    if (local) {
+      const parsed = JSON.parse(local);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));
+      }
+    }
+  } catch (err) {
+    console.warn('Could not parse local experiences:', err);
+  }
+
   const path = 'experiences';
   try {
     const colRef = collection(db, path);
@@ -187,7 +269,9 @@ export async function getExperiences(): Promise<ExperienceItem[]> {
       snap.forEach((docSnap) => {
         items.push(docSnap.data() as ExperienceItem);
       });
-      return items.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));
+      const sorted = items.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));
+      localStorage.setItem(EXPERIENCES_STORAGE_KEY, JSON.stringify(sorted));
+      return sorted;
     }
     return defaultExperiences;
   } catch (error) {
@@ -198,28 +282,55 @@ export async function getExperiences(): Promise<ExperienceItem[]> {
 
 // Save Experience
 export async function upsertExperience(exp: ExperienceItem): Promise<void> {
-  const path = `experiences/${exp.id}`;
   try {
-    const docRef = doc(db, 'experiences', exp.id);
-    await setDoc(docRef, exp, { merge: true });
-  } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, path);
+    const current = await getExperiences();
+    const idx = current.findIndex((e) => e.id === exp.id);
+    let updated: ExperienceItem[];
+    if (idx >= 0) {
+      updated = [...current];
+      updated[idx] = exp;
+    } else {
+      updated = [exp, ...current];
+    }
+    localStorage.setItem(EXPERIENCES_STORAGE_KEY, JSON.stringify(updated));
+  } catch (err) {
+    console.warn('Could not save experience to localStorage:', err);
   }
+
+  const path = `experiences/${exp.id}`;
+  const docRef = doc(db, 'experiences', exp.id);
+  await syncToFirestore(() => setDoc(docRef, exp, { merge: true }), OperationType.WRITE, path, `experience ${exp.role}`);
 }
 
 // Delete Experience
 export async function removeExperience(expId: string): Promise<void> {
-  const path = `experiences/${expId}`;
   try {
-    const docRef = doc(db, 'experiences', expId);
-    await deleteDoc(docRef);
-  } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, path);
+    const current = await getExperiences();
+    const updated = current.filter((e) => e.id !== expId);
+    localStorage.setItem(EXPERIENCES_STORAGE_KEY, JSON.stringify(updated));
+  } catch (err) {
+    console.warn('Could not remove experience from localStorage:', err);
   }
+
+  const path = `experiences/${expId}`;
+  const docRef = doc(db, 'experiences', expId);
+  await syncToFirestore(() => deleteDoc(docRef), OperationType.DELETE, path, `experience ${expId}`);
 }
 
 // Fetch Education
 export async function getEducation(): Promise<EducationItem[]> {
+  try {
+    const local = localStorage.getItem(EDUCATION_STORAGE_KEY);
+    if (local) {
+      const parsed = JSON.parse(local);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));
+      }
+    }
+  } catch (err) {
+    console.warn('Could not parse local education:', err);
+  }
+
   const path = 'education';
   try {
     const colRef = collection(db, path);
@@ -229,7 +340,9 @@ export async function getEducation(): Promise<EducationItem[]> {
       snap.forEach((docSnap) => {
         items.push(docSnap.data() as EducationItem);
       });
-      return items.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));
+      const sorted = items.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));
+      localStorage.setItem(EDUCATION_STORAGE_KEY, JSON.stringify(sorted));
+      return sorted;
     }
     return defaultEducation;
   } catch (error) {
@@ -240,28 +353,55 @@ export async function getEducation(): Promise<EducationItem[]> {
 
 // Save Education
 export async function upsertEducation(edu: EducationItem): Promise<void> {
-  const path = `education/${edu.id}`;
   try {
-    const docRef = doc(db, 'education', edu.id);
-    await setDoc(docRef, edu, { merge: true });
-  } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, path);
+    const current = await getEducation();
+    const idx = current.findIndex((e) => e.id === edu.id);
+    let updated: EducationItem[];
+    if (idx >= 0) {
+      updated = [...current];
+      updated[idx] = edu;
+    } else {
+      updated = [...current, edu];
+    }
+    localStorage.setItem(EDUCATION_STORAGE_KEY, JSON.stringify(updated));
+  } catch (err) {
+    console.warn('Could not save education to localStorage:', err);
   }
+
+  const path = `education/${edu.id}`;
+  const docRef = doc(db, 'education', edu.id);
+  await syncToFirestore(() => setDoc(docRef, edu, { merge: true }), OperationType.WRITE, path, `education ${edu.degree}`);
 }
 
 // Delete Education
 export async function removeEducation(eduId: string): Promise<void> {
-  const path = `education/${eduId}`;
   try {
-    const docRef = doc(db, 'education', eduId);
-    await deleteDoc(docRef);
-  } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, path);
+    const current = await getEducation();
+    const updated = current.filter((e) => e.id !== eduId);
+    localStorage.setItem(EDUCATION_STORAGE_KEY, JSON.stringify(updated));
+  } catch (err) {
+    console.warn('Could not remove education from localStorage:', err);
   }
+
+  const path = `education/${eduId}`;
+  const docRef = doc(db, 'education', eduId);
+  await syncToFirestore(() => deleteDoc(docRef), OperationType.DELETE, path, `education ${eduId}`);
 }
 
 // Fetch Seminars
 export async function getSeminars(): Promise<SeminarItem[]> {
+  try {
+    const local = localStorage.getItem(SEMINARS_STORAGE_KEY);
+    if (local) {
+      const parsed = JSON.parse(local);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));
+      }
+    }
+  } catch (err) {
+    console.warn('Could not parse local seminars:', err);
+  }
+
   const path = 'seminars';
   try {
     const colRef = collection(db, path);
@@ -271,7 +411,9 @@ export async function getSeminars(): Promise<SeminarItem[]> {
       snap.forEach((docSnap) => {
         items.push(docSnap.data() as SeminarItem);
       });
-      return items.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));
+      const sorted = items.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));
+      localStorage.setItem(SEMINARS_STORAGE_KEY, JSON.stringify(sorted));
+      return sorted;
     }
     return defaultSeminars;
   } catch (error) {
@@ -282,24 +424,39 @@ export async function getSeminars(): Promise<SeminarItem[]> {
 
 // Save Seminar
 export async function upsertSeminar(seminar: SeminarItem): Promise<void> {
-  const path = `seminars/${seminar.id}`;
   try {
-    const docRef = doc(db, 'seminars', seminar.id);
-    await setDoc(docRef, seminar, { merge: true });
-  } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, path);
+    const current = await getSeminars();
+    const idx = current.findIndex((s) => s.id === seminar.id);
+    let updated: SeminarItem[];
+    if (idx >= 0) {
+      updated = [...current];
+      updated[idx] = seminar;
+    } else {
+      updated = [...current, seminar];
+    }
+    localStorage.setItem(SEMINARS_STORAGE_KEY, JSON.stringify(updated));
+  } catch (err) {
+    console.warn('Could not save seminar to localStorage:', err);
   }
+
+  const path = `seminars/${seminar.id}`;
+  const docRef = doc(db, 'seminars', seminar.id);
+  await syncToFirestore(() => setDoc(docRef, seminar, { merge: true }), OperationType.WRITE, path, `seminar ${seminar.title}`);
 }
 
 // Delete Seminar
 export async function removeSeminar(seminarId: string): Promise<void> {
-  const path = `seminars/${seminarId}`;
   try {
-    const docRef = doc(db, 'seminars', seminarId);
-    await deleteDoc(docRef);
-  } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, path);
+    const current = await getSeminars();
+    const updated = current.filter((s) => s.id !== seminarId);
+    localStorage.setItem(SEMINARS_STORAGE_KEY, JSON.stringify(updated));
+  } catch (err) {
+    console.warn('Could not remove seminar from localStorage:', err);
   }
+
+  const path = `seminars/${seminarId}`;
+  const docRef = doc(db, 'seminars', seminarId);
+  await syncToFirestore(() => deleteDoc(docRef), OperationType.DELETE, path, `seminar ${seminarId}`);
 }
 
 // Send Contact Message (from public visitors)
@@ -482,12 +639,8 @@ export async function upsertCertificate(cert: CertificateItem): Promise<void> {
   }
 
   const path = `certificates/${cert.id}`;
-  try {
-    const docRef = doc(db, 'certificates', cert.id);
-    await setDoc(docRef, cert, { merge: true });
-  } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, path);
-  }
+  const docRef = doc(db, 'certificates', cert.id);
+  await syncToFirestore(() => setDoc(docRef, cert, { merge: true }), OperationType.WRITE, path, `certificate ${cert.title}`);
 }
 
 // Remove Certificate
@@ -501,12 +654,8 @@ export async function removeCertificate(certId: string): Promise<void> {
   }
 
   const path = `certificates/${certId}`;
-  try {
-    const docRef = doc(db, 'certificates', certId);
-    await deleteDoc(docRef);
-  } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, path);
-  }
+  const docRef = doc(db, 'certificates', certId);
+  await syncToFirestore(() => deleteDoc(docRef), OperationType.DELETE, path, `certificate ${certId}`);
 }
 
 // Seed all default CV items to Firestore

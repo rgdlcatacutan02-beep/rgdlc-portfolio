@@ -70,12 +70,12 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
             return (
               <div key={exp.id} className="relative group">
                 {/* Timeline node icon */}
-                <div className="absolute -left-[33px] sm:-left-[49px] top-1.5 flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-full border-2 border-[#004643] dark:border-[#028090] bg-white dark:bg-slate-900 text-[#004643] dark:text-[#2dd4bf] shadow-md group-hover:bg-[#004643] dark:group-hover:bg-[#028090] group-hover:text-white transition-colors">
+                <div className="absolute -left-[33px] sm:-left-[49px] top-1.5 flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-full border-2 border-[#004643] dark:border-[#028090] bg-white dark:bg-slate-900 text-[#004643] dark:text-[#2dd4bf] shadow-md group-hover:bg-[#004643] dark:group-hover:bg-[#028090] group-hover:text-white group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
                   <Briefcase className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </div>
 
                 {/* Experience Card */}
-                <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-[#fffffe] dark:bg-slate-900/60 hover:border-[#004643]/40 dark:hover:border-[#028090]/50 p-6 sm:p-8 transition-all shadow-sm hover:shadow-md">
+                <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-[#fffffe] dark:bg-slate-900/60 hover:border-[#004643]/40 dark:hover:border-[#028090]/50 group-hover:-translate-y-0.5 group-hover:shadow-lg p-6 sm:p-8 transition-all duration-300 shadow-sm">
                   {/* Top Bar: Role, Company, Period */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-4 mb-4">
                     <div>
@@ -138,7 +138,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                       {toolsList.map((tool, idx) => (
                         <span
                           key={idx}
-                          className="rounded-md bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs px-2.5 py-0.5 font-mono-code border border-slate-200 dark:border-slate-700"
+                          className="rounded-md bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs px-2.5 py-0.5 font-mono-code border border-slate-200 dark:border-slate-700 hover:border-[#028090] dark:hover:border-[#2dd4bf] hover:text-[#004643] dark:hover:text-[#2dd4bf] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 inline-block"
                         >
                           {tool}
                         </span>

@@ -141,25 +141,23 @@ export const Navbar: React.FC<NavbarProps> = ({ profile, onSecretAdminTrigger })
           <a
             href="#home"
             onClick={(e) => handleNavClick(e, '#home')}
-            className="group flex items-center gap-2.5 focus:outline-none"
+            className="group flex items-center focus:outline-none transition-transform duration-200 hover:scale-[1.02]"
             aria-label="Regie De Leon Catacutan Home"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#004643] dark:bg-[#0d5c58] text-white font-bold font-mono-code text-sm shadow-sm transition-transform duration-300 group-hover:scale-105 group-hover:bg-[#028090]">
-              RC
-            </div>
             <div className="flex flex-col">
-              <span className="text-lg font-extrabold tracking-tight text-[#004643] dark:text-white font-['Space_Grotesk'] leading-none">
+              <span className="text-lg font-extrabold tracking-tight text-[#004643] dark:text-white group-hover:text-[#028090] dark:group-hover:text-[#2dd4bf] font-['Space_Grotesk'] leading-none transition-colors duration-200">
                 CATACUTAN
                 <span
                   onClick={handleLogoDotClick}
-                  className="text-[#028090] dark:text-[#2dd4bf] cursor-pointer select-none transition-transform hover:scale-125 inline-block"
+                  className="text-[#028090] dark:text-[#2dd4bf] group-hover:text-[#f02a2d] cursor-pointer select-none transition-all duration-300 group-hover:scale-150 inline-block drop-shadow-[0_0_8px_rgba(45,212,191,0.5)]"
                   title="."
                 >
                   .
                 </span>
               </span>
-              <span className="text-[10px] font-mono-code tracking-wider uppercase text-slate-500 dark:text-slate-400 mt-0.5 font-semibold">
-                Computer Engineer
+              <span className="text-[10px] font-mono-code tracking-wider uppercase text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 mt-0.5 font-semibold transition-colors duration-200 flex items-center gap-1.5">
+                <span className="h-1 w-1 rounded-full bg-[#028090] dark:bg-[#2dd4bf] opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                <span>Computer Engineer</span>
               </span>
             </div>
           </a>

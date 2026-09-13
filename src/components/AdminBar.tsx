@@ -14,6 +14,7 @@ import {
   Cpu,
   ShieldCheck,
   FileText,
+  Save,
 } from 'lucide-react';
 
 interface AdminBarProps {
@@ -27,6 +28,7 @@ interface AdminBarProps {
   onEditEligibility?: () => void;
   onManageCv?: () => void;
   onSeedDefaults: () => void;
+  onSaveAll?: () => void;
   userEmail: string | null;
   syncing: boolean;
   onOpenMessages?: () => void;
@@ -34,6 +36,8 @@ interface AdminBarProps {
   onLogout?: () => void;
   onToggleEditMode?: () => void;
   onChangeCredentials?: () => void;
+  isCloudConnected?: boolean;
+  onConnectCloud?: () => void;
 }
 
 export const AdminBar: React.FC<AdminBarProps> = ({
@@ -47,6 +51,7 @@ export const AdminBar: React.FC<AdminBarProps> = ({
   onEditEligibility,
   onManageCv,
   onSeedDefaults,
+  onSaveAll,
   userEmail,
   syncing,
   onOpenMessages,
@@ -54,6 +59,8 @@ export const AdminBar: React.FC<AdminBarProps> = ({
   onLogout,
   onToggleEditMode,
   onChangeCredentials,
+  isCloudConnected = false,
+  onConnectCloud,
 }) => {
   return (
     <aside
@@ -62,13 +69,34 @@ export const AdminBar: React.FC<AdminBarProps> = ({
     >
       <div className="mx-auto max-w-7xl flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2 font-semibold">
-          <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className={`flex h-2 w-2 rounded-full ${isCloudConnected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
           <UserCheck className="h-4 w-4 text-emerald-300" />
           <span className="text-white font-mono-code">Admin Bar</span>
           <span className="text-white/40 hidden sm:inline">|</span>
           <span className="text-emerald-200 hidden sm:inline truncate max-w-[180px] font-mono-code text-[11px]">
             {userEmail}
           </span>
+          {isCloudConnected ? (
+            <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-mono-code font-bold">
+              CLOUD SYNCED
+            </span>
+          ) : (
+            <div className="hidden md:flex items-center gap-1.5">
+              <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-200 border border-amber-400/30 text-[10px] font-mono-code font-bold">
+                LOCAL MODE
+              </span>
+              {onConnectCloud && (
+                <button
+                  type="button"
+                  onClick={onConnectCloud}
+                  className="px-2.5 py-0.5 rounded-full bg-cyan-500/25 hover:bg-cyan-500/40 text-cyan-200 border border-cyan-400/40 text-[10px] font-bold transition-colors cursor-pointer"
+                  title="Sign in with Google to enable live Cloud Firestore sync"
+                >
+                  Connect Cloud
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
@@ -185,6 +213,18 @@ export const AdminBar: React.FC<AdminBarProps> = ({
                   {unreadCount}
                 </span>
               )}
+            </button>
+          )}
+
+          {onSaveAll && (
+            <button
+              onClick={onSaveAll}
+              disabled={syncing}
+              className="flex items-center gap-1.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3.5 py-1 font-bold border border-emerald-400/40 transition-all shadow-md active:scale-95 cursor-pointer"
+              title="Save all changes to local storage and Cloud Firestore"
+            >
+              <Save className="h-3.5 w-3.5 text-slate-950" />
+              <span>Save Changes</span>
             </button>
           )}
 

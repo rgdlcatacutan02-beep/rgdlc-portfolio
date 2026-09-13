@@ -12,9 +12,11 @@ import {
   Linkedin,
   Terminal,
   Download,
+  Maximize2,
+  X,
 } from 'lucide-react';
 import { PortfolioProfile } from '../types';
-import { triggerPdfDownload } from '../utils/fileUtils';
+import { triggerPdfDownload, sanitizeUrl } from '../utils/fileUtils';
 
 interface HeroProps {
   profile: PortfolioProfile;
@@ -32,6 +34,7 @@ export const Hero: React.FC<HeroProps> = ({
   onEditEligibility,
 }) => {
   const [activeTab, setActiveTab] = useState<'engineer' | 'skills' | 'philosophy'>('engineer');
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
 
   return (
     <section id="home" className="relative overflow-hidden pt-8 pb-16 md:pt-14 md:pb-24 bg-[#ffffff] dark:bg-[#070b14] transition-colors duration-250">
@@ -47,7 +50,7 @@ export const Hero: React.FC<HeroProps> = ({
           <div className="lg:col-span-7 space-y-6">
             
             {/* Status Pill with Pulsing Indicator */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-50/80 dark:bg-emerald-950/40 px-3.5 py-1.5 shadow-sm text-xs font-mono-code font-semibold text-emerald-800 dark:text-emerald-300">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-50/80 dark:bg-emerald-950/40 px-3.5 py-1.5 shadow-sm text-xs font-mono-code font-semibold text-emerald-800 dark:text-emerald-300 hover:border-emerald-500/60 hover:bg-emerald-100/80 dark:hover:bg-emerald-950/70 hover:shadow-md transition-all duration-200 cursor-default">
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
@@ -61,25 +64,38 @@ export const Hero: React.FC<HeroProps> = ({
             </div>
 
             {/* Greeting & Name */}
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="flex items-center gap-2 text-xs font-mono-code uppercase tracking-widest text-[#028090] dark:text-[#2dd4bf] font-bold">
                 <Sparkles className="w-3.5 h-3.5 text-[#f02a2d]" />
                 <span>// HELLO WORLD — MEET THE ENGINEER</span>
               </div>
 
-              <div className="flex items-start sm:items-center gap-4">
-                {/* Profile Photo Avatar Frame */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-6 pt-1">
+                {/* Profile Photo Avatar Frame - Enlarged & Focused */}
                 <div className="relative group shrink-0">
-                  <div className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-2xl p-1 bg-gradient-to-tr from-[#004643] via-[#028090] to-emerald-400 shadow-md">
-                    <div className="h-full w-full rounded-[12px] overflow-hidden bg-white dark:bg-slate-900 flex items-center justify-center">
+                  <div className="relative h-28 w-28 sm:h-36 sm:w-36 md:h-44 md:w-44 rounded-3xl p-1.5 bg-gradient-to-tr from-[#004643] via-[#028090] to-emerald-400 shadow-xl ring-4 ring-emerald-500/15 transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-2xl group-hover:shadow-emerald-500/25 group-hover:ring-8 group-hover:ring-emerald-500/30 group-hover:-translate-y-1">
+                    <div
+                      onClick={() => profile.photoUrl && setIsPhotoModalOpen(true)}
+                      className={`h-full w-full rounded-[20px] overflow-hidden bg-white dark:bg-slate-900 flex items-center justify-center relative ${
+                        profile.photoUrl ? 'cursor-pointer' : ''
+                      }`}
+                      title={profile.photoUrl ? 'Click to view full photo' : undefined}
+                    >
                       {profile.photoUrl ? (
-                        <img
-                          src={profile.photoUrl}
-                          alt={profile.fullName}
-                          className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                        />
+                        <>
+                          <img
+                            src={profile.photoUrl}
+                            alt={profile.fullName}
+                            className="h-full w-full object-cover object-[center_16%] scale-110 group-hover:scale-115 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-slate-950/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span className="p-2 rounded-full bg-white/90 dark:bg-slate-900/90 text-[#004643] dark:text-[#2dd4bf] shadow-lg">
+                              <Maximize2 className="w-4 h-4" />
+                            </span>
+                          </div>
+                        </>
                       ) : (
-                        <span className="text-2xl font-bold font-['Space_Grotesk'] text-[#004643] dark:text-white">RC</span>
+                        <span className="text-3xl font-bold font-['Space_Grotesk'] text-[#004643] dark:text-white">RC</span>
                       )}
                     </div>
                   </div>
@@ -87,16 +103,16 @@ export const Hero: React.FC<HeroProps> = ({
                   {isEditMode && (
                     <button
                       onClick={onEditProfile}
-                      className="absolute -bottom-1 -right-1 p-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md transition-all hover:scale-110"
+                      className="absolute -bottom-2 -right-2 p-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-lg transition-all hover:scale-110 cursor-pointer"
                       title="Edit Profile Photo"
                       aria-label="Edit Profile Photo"
                     >
-                      <Camera className="h-3.5 w-3.5" />
+                      <Camera className="h-4 w-4" />
                     </button>
                   )}
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
                     <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#004643] dark:text-white font-['Space_Grotesk'] leading-[1.1]">
                       {profile.fullName}
@@ -155,7 +171,7 @@ export const Hero: React.FC<HeroProps> = ({
               {/* Secondary Navigation to Contact */}
               <a
                 href="#contact"
-                className="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-[#004643]/40 dark:hover:border-[#028090]/50 hover:bg-slate-50 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-200 font-semibold px-5 py-3 text-sm transition-all duration-200 shadow-sm"
+                className="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-[#004643] dark:hover:border-[#028090] hover:bg-slate-50 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-200 font-semibold px-5 py-3 text-sm transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
               >
                 <span>Get In Touch</span>
               </a>
@@ -164,7 +180,7 @@ export const Hero: React.FC<HeroProps> = ({
               <button
                 type="button"
                 onClick={() => triggerPdfDownload(profile.cvUrl || '/Regie_De_Leon_Catacutan_CV.pdf', profile.cvFileName || 'Regie_De_Leon_Catacutan_CV.pdf')}
-                className="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-[#004643]/40 dark:hover:border-[#028090]/50 hover:bg-slate-50 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-200 font-semibold px-5 py-3 text-sm transition-all duration-200 shadow-sm group cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-[#004643] dark:hover:border-[#028090] hover:bg-slate-50 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-200 font-semibold px-5 py-3 text-sm transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 group cursor-pointer"
                 title="Download Official CV (PDF)"
               >
                 <Download className="w-4 h-4 text-[#028090] dark:text-[#2dd4bf] transition-transform duration-200 group-hover:translate-y-0.5" />
@@ -175,10 +191,10 @@ export const Hero: React.FC<HeroProps> = ({
               <div className="flex items-center gap-2 pl-2 sm:border-l sm:border-slate-200 dark:sm:border-slate-800 sm:ml-2">
                 {profile.github && (
                   <a
-                    href={profile.github}
+                    href={sanitizeUrl(profile.github)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2.5 rounded-full border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#004643] dark:hover:text-white hover:border-[#004643]/50 dark:hover:border-[#028090]/50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                    className="p-2.5 rounded-full border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#004643] dark:hover:text-white hover:border-[#004643]/50 dark:hover:border-[#028090]/50 hover:bg-slate-50 dark:hover:bg-slate-800 hover:scale-110 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200"
                     title="GitHub"
                     aria-label="GitHub Profile"
                   >
@@ -187,10 +203,10 @@ export const Hero: React.FC<HeroProps> = ({
                 )}
                 {profile.linkedin && (
                   <a
-                    href={profile.linkedin}
+                    href={sanitizeUrl(profile.linkedin)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2.5 rounded-full border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#004643] dark:hover:text-white hover:border-[#004643]/50 dark:hover:border-[#028090]/50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                    className="p-2.5 rounded-full border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#004643] dark:hover:text-white hover:border-[#004643]/50 dark:hover:border-[#028090]/50 hover:bg-slate-50 dark:hover:bg-slate-800 hover:scale-110 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200"
                     title="LinkedIn"
                     aria-label="LinkedIn Profile"
                   >
@@ -417,6 +433,51 @@ export const Hero: React.FC<HeroProps> = ({
         </div>
 
       </div>
+
+      {/* High-Resolution Profile Photo Lightbox Modal */}
+      {isPhotoModalOpen && profile.photoUrl && (
+        <div
+          onClick={() => setIsPhotoModalOpen(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200 cursor-zoom-out"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-lg w-full rounded-3xl overflow-hidden bg-slate-900 border border-slate-700 shadow-2xl animate-in zoom-in-95 duration-200 cursor-default"
+          >
+            <div className="relative max-h-[75vh] overflow-hidden bg-slate-950 flex items-center justify-center">
+              <img
+                src={profile.photoUrl}
+                alt={profile.fullName}
+                className="w-full h-auto max-h-[75vh] object-contain"
+              />
+              <button
+                onClick={() => setIsPhotoModalOpen(false)}
+                className="absolute top-3 right-3 p-2 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white transition-colors cursor-pointer"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 bg-slate-900 flex items-center justify-between">
+              <div>
+                <p className="font-bold text-white text-sm">{profile.fullName}</p>
+                <p className="text-xs text-slate-400">{profile.title}</p>
+              </div>
+              {isEditMode && (
+                <button
+                  onClick={() => {
+                    setIsPhotoModalOpen(false);
+                    onEditProfile();
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow transition-all cursor-pointer"
+                >
+                  Change Photo
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

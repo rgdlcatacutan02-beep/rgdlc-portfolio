@@ -9,6 +9,8 @@ import {
   loginWithGoogle,
   logoutUser,
   onAuthStateChanged,
+  isAuthorizedOwner,
+  AUTHORIZED_OWNER_EMAIL,
   User,
 } from './firebase';
 import {
@@ -53,6 +55,7 @@ import {
   removeCertificate,
   getContactMessages,
   removeContactMessage,
+  saveProjectsOrder,
   seedDefaultsToFirestore,
 } from './services/portfolioService';
 import { getAdminSession, clearAdminSession } from './services/adminAuthService';
@@ -146,8 +149,16 @@ export default function App() {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        setIsEditMode(true);
-        loadMessages();
+        if (isAuthorizedOwner(currentUser)) {
+          setIsEditMode(true);
+          setAdminUser(currentUser.displayName || currentUser.email || 'Admin');
+          loadMessages();
+        } else {
+          // Unrecognized account: immediately de-escalate and sign out
+          setIsEditMode(false);
+          setAdminUser(null);
+          logoutUser().catch(console.error);
+        }
       } else if (!adminUser) {
         setIsEditMode(false);
       }
@@ -267,12 +278,42 @@ export default function App() {
     await upsertProject(project);
     setProjects((prev) => {
       const exists = prev.some((p) => p.id === project.id);
+      let updated: ProjectItem[];
       if (exists) {
-        return prev.map((p) => (p.id === project.id ? project : p));
+        updated = prev.map((p) => (p.id === project.id ? project : p));
+      } else {
+        updated = [project, ...prev];
       }
-      return [project, ...prev];
+
+      // If set to spotlight position #1
+      if (project.order === '1') {
+        const target = updated.find((p) => p.id === project.id);
+        const others = updated.filter((p) => p.id !== project.id);
+        if (target) {
+          updated = [target, ...others];
+          saveProjectsOrder(updated);
+          return updated;
+        }
+      }
+      return updated;
     });
     showNotification(`Project "${project.title}" saved successfully!`);
+  };
+
+  const handleReorderProjects = async (reordered: ProjectItem[]) => {
+    setProjects(reordered);
+    showNotification('Project showcase order updated!');
+    await saveProjectsOrder(reordered);
+  };
+
+  const handleSetSpotlightProject = async (projectId: string) => {
+    const target = projects.find((p) => p.id === projectId);
+    if (!target) return;
+    const others = projects.filter((p) => p.id !== projectId);
+    const reordered = [target, ...others];
+    setProjects(reordered);
+    showNotification(`"${target.title}" is now the spotlight showcase project!`);
+    await saveProjectsOrder(reordered);
   };
 
   const handleDeleteProject = async (projectId: string) => {
@@ -462,6 +503,21 @@ export default function App() {
     showNotification('Message deleted.');
   };
 
+  // Manual Save All Action
+  const handleSaveAll = async () => {
+    setSyncing(true);
+    try {
+      await saveProjectsOrder(projects);
+      await updatePortfolioProfile(profile);
+      showNotification('All portfolio changes saved and synced successfully!');
+    } catch (err) {
+      console.error('Failed to save all changes:', err);
+      showNotification('Failed to save changes.');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   // Sync / Seed Defaults
   const handleSeedDefaults = async () => {
     if (confirm('This will synchronize your baseline portfolio information into Cloud Firestore. Continue?')) {
@@ -523,6 +579,7 @@ export default function App() {
             setIsEditSkillCategoryOpen(true);
           }}
           onSeedDefaults={handleSeedDefaults}
+          onSaveAll={handleSaveAll}
           userEmail={adminUser ? `${adminUser} (Admin)` : user?.email || 'admin'}
           syncing={syncing}
           onOpenMessages={() => setIsMessagesDrawerOpen(true)}
@@ -530,6 +587,26 @@ export default function App() {
           onLogout={handleLogout}
           onToggleEditMode={() => setIsEditMode(!isEditMode)}
           onChangeCredentials={() => setIsChangeCredsOpen(true)}
+          isCloudConnected={Boolean(user)}
+          onConnectCloud={async () => {
+            try {
+              const u = await loginWithGoogle();
+              if (u) {
+                if (!isAuthorizedOwner(u)) {
+                  await logoutUser();
+                  showNotification(`Access denied: Only verified owner (${AUTHORIZED_OWNER_EMAIL}) can sync to Cloud Firestore.`);
+                  return;
+                }
+                setAdminUser(u.displayName || u.email || 'Admin');
+                setIsEditMode(true);
+                showNotification('Cloud connected! Live Firestore sync enabled.');
+                loadMessages();
+              }
+            } catch (err: unknown) {
+              console.error('Cloud connect failed:', err);
+              showNotification('Google Sign-in was cancelled or failed.');
+            }
+          }}
         />
       )}
 
@@ -563,6 +640,9 @@ export default function App() {
             setIsEditProjectOpen(true);
           }}
           onDeleteProject={handleDeleteProject}
+          onReorderProjects={handleReorderProjects}
+          onSetSpotlightProject={handleSetSpotlightProject}
+          onSaveOrder={handleSaveAll}
         />
 
         <ExperienceSection

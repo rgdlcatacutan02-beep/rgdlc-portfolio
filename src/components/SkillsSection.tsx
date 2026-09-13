@@ -95,7 +95,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
           {categories.map((cat) => (
             <div
               key={cat.id || cat.title}
-              className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-[#fffffe] dark:bg-slate-900/60 p-6 space-y-4 hover:border-[#004643]/40 dark:hover:border-[#028090]/50 transition-all shadow-sm hover:shadow-md flex flex-col justify-between"
+              className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-[#fffffe] dark:bg-slate-900/60 p-6 space-y-4 hover:border-[#004643]/40 dark:hover:border-[#028090]/50 hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-lg flex flex-col justify-between"
             >
               <div className="space-y-4">
                 {/* Category Header */}
@@ -139,7 +139,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
                   {cat.skills.map((skill, idx) => (
                     <span
                       key={idx}
-                      className="group inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 hover:border-[#004643]/40 dark:hover:border-[#028090]/50 hover:bg-[#004643]/5 dark:hover:bg-[#028090]/15 hover:text-[#004643] dark:hover:text-[#2dd4bf] text-slate-700 dark:text-slate-200 text-xs px-3 py-1.5 font-mono-code font-medium transition-colors"
+                      className="group inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 hover:border-[#004643]/40 dark:hover:border-[#028090]/50 hover:bg-[#004643]/5 dark:hover:bg-[#028090]/15 hover:text-[#004643] dark:hover:text-[#2dd4bf] hover:scale-[1.03] hover:-translate-y-0.5 hover:shadow-sm text-slate-700 dark:text-slate-200 text-xs px-3 py-1.5 font-mono-code font-medium transition-all duration-200"
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-[#028090] dark:bg-[#2dd4bf]" />
                       <span>{skill}</span>

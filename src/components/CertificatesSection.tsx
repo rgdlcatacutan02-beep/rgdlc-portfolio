@@ -212,7 +212,7 @@ export const CertificatesSection: React.FC<CertificatesSectionProps> = ({
               return (
                 <div
                   key={cert.id}
-                  className={`rounded-2xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-slate-900/90 p-6 sm:p-7 space-y-4 transition-all duration-200 shadow-sm hover:shadow-md flex flex-col justify-between relative group ${theme.borderColor}`}
+                  className={`rounded-2xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-slate-900/90 p-6 sm:p-7 space-y-4 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between relative group ${theme.borderColor}`}
                 >
                   {/* Card Top: Category badge & Edit/Delete actions */}
                   <div className="space-y-3.5">
@@ -299,7 +299,7 @@ export const CertificatesSection: React.FC<CertificatesSectionProps> = ({
                       <button
                         type="button"
                         onClick={() => openPdfPreview(cert.credentialUrl || '')}
-                        className="inline-flex items-center gap-1.5 rounded-xl border border-[#028090]/30 hover:border-[#028090] bg-[#028090]/10 hover:bg-[#028090] text-[#028090] hover:text-white dark:text-[#2dd4bf] dark:hover:text-[#070b14] dark:hover:bg-[#2dd4bf] font-semibold px-3.5 py-1.5 text-xs shadow-sm transition-all"
+                        className="inline-flex items-center gap-1.5 rounded-xl border border-[#028090]/30 hover:border-[#028090] bg-[#028090]/10 hover:bg-[#028090] text-[#028090] hover:text-white dark:text-[#2dd4bf] dark:hover:text-[#070b14] dark:hover:bg-[#2dd4bf] font-semibold px-3.5 py-1.5 text-xs shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
                       >
                         <Eye className="h-3.5 w-3.5" />
                         <span>View Document / Proof</span>

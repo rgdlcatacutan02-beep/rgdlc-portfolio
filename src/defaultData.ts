@@ -20,7 +20,7 @@ export const defaultProfile: PortfolioProfile = {
   title: 'Computer Engineer & IT Professional',
   email: 'rgdlcatacutan02@gmail.com',
   phone: '0981-5731-759',
-  location: '137 Brgy. San Isidro, Magalang, Pampanga, Philippines',
+  location: 'Magalang, Pampanga, Philippines',
   summary:
     'Dedicated IT professional with hands-on experience in Network engineering, IT support, server maintenance, and infrastructure management. Proficient in troubleshooting technical issues, supporting business operations, maintaining network and surveillance systems, and developing websites using AI-assisted tools. Strong analytical and problem-solving skills with a passion for leveraging technology to improve operational efficiency and user experience.',
   cvUrl: '/Regie_De_Leon_Catacutan_CV.pdf',
@@ -28,7 +28,7 @@ export const defaultProfile: PortfolioProfile = {
   cvFileSize: '304 KB',
   cvUpdatedAt: new Date().toISOString(),
   civilServiceEligibility: defaultCivilServiceEligibility,
-  github: 'https://github.com',
+  github: 'https://github.com/rgdlcatacutan02-beep',
   linkedin: 'https://linkedin.com',
   updatedAt: new Date().toISOString(),
 };
@@ -63,8 +63,56 @@ export const defaultProjects: ProjectItem[] = [
       'RBAC & Authentication: Role-based access for administrators, veterinarians, veterinary assistants, receptionists, and pet owners\nPatient Management: Comprehensive client and pet profiles with medical history, weight tracking, allergies, microchip information, and clinical alerts\nAppointment Management: Calendar-based scheduling with veterinarian assignment and complete appointment status tracking\nElectronic Medical Records (EMR): Structured veterinary SOAP notes, diagnoses, prescriptions, procedures, and printable medical summaries\nVaccination & Preventive Care: Vaccine records, booster due dates, lot/batch tracking, and printable vaccination certificates\nPharmacy & Prescriptions: Medication dispensing, dosage instructions, treatment tracking, and printable prescriptions\nLaboratory Management: Diagnostic orders, result recording, reference flags, attachments, and status tracking\nSurgical Management: Surgery scheduling, surgeon assignment, anesthesia/recovery notes, and post-operative care documentation\nPOS & Billing: Itemized invoices, taxes, balances, multiple payment methods, and printable receipts\nInventory Management: Medication, vaccine, supply, and consumable stock tracking with low-stock and expiration alerts\nStaff Management: Staff profiles, credentials, employment information, and account access controls\nAudit Logging: Traceable system activity logs for security, compliance, and record accountability\nPet Owner Portal: Online appointment requests, digital health records, vaccination history, medication information, and bill review\nEngineering Highlights: Modular architecture covering 14 core veterinary workflows, strict TypeScript models, and normalized relational data models (Clients → Pets → Appointments → Medical Records → Invoices)',
     tags: 'React, TypeScript, Tailwind CSS, Context API, Custom Hooks, Lucide React, Responsive UI, EMR, Healthtech, POS, Role-Based Access Control',
     featured: 'true',
-    link: '',
+    link: 'https://github.com/rgdlcatacutan02-beep/veterinary-clinic-management-system',
     order: '2',
+  },
+  {
+    id: 'arcforge',
+    title: 'ARCforge',
+    subtitle: 'Autonomous IoT Aquaculture Telemetry & Automation Platform',
+    category: 'IoT & Embedded Systems',
+    year: '2026',
+    role: 'Embedded Systems & Full-Stack IoT Engineer',
+    description:
+      'An open-source, production-ready full-stack IoT platform tailored for high-density aquaculture operations (Australian Redclaw crayfish and recirculating systems), bridging physical edge hardware with real-time cloud telemetry and automation.',
+    highlights:
+      'Real-Time Telemetry Matrix: Live sub-second monitoring for Dissolved Oxygen (mg/L), Water pH, Temperature (°C), Turbidity (NTU), and battery parameters\nClosed-Loop Edge Automation Engine: Fail-safe threshold evaluations running on edge hardware with manual emergency kill-switch overrides\nSolar & LiFePO4 Microgrid Hub: Live power-flow telemetry (Solar PV yield vs. active farm pump loads), MPPT efficiency metrics, and autonomy forecasting\nLive Node Camera Matrix: Multi-camera grid with MJPEG/RTSP stream integration, low-latency node inspection, and snapshot triggers\nAutomated Feeder Schedules: Micro-controlled servo feeder augers with schedule presets, manual pulse controls, and historical feeding logs\nIncident Alert Center: Multi-level alerts (Critical, Warning, Info) with automated SMS dispatch routing and status tracking\nPredictive Analytics Suite: Multi-parametric historical time-series graphs with CSV/JSON export and AI-driven biological buffer diagnostics',
+    tags: 'Next.js 15, React 19, TypeScript, Tailwind CSS, Zustand, Firebase Firestore, Raspberry Pi 4B, ESP32-CAM, IoT Sensors, REST API, Solar MPPT',
+    featured: 'true',
+    link: 'https://github.com/rgdlcatacutan02-beep/ARCforge',
+    order: '3',
+  },
+  {
+    id: 'coffeegarage-pos',
+    title: 'CoffeeGarage POS',
+    subtitle: 'Smart Café Management, POS & Kitchen Display System',
+    category: 'Full-Stack Web App',
+    year: '2026',
+    role: 'Full-Stack Developer & Systems Architect',
+    description:
+      'An intelligent cloud-native café management and Point of Sale platform featuring recipe-level inventory deduction, real-time Kitchen Display System (KDS), customer loyalty rewards, and AI-powered business analytics.',
+    highlights:
+      'Fast-Paced Touch POS Interface: Quick item selection, drink customizations, addons, split bills, discount vouchers, and cash drawer management\nReal-Time Kitchen Display System (KDS): Live kitchen/barista order dispatch tickets with timer indicators, status progressions, and audio/visual alerts\nIngredient-Level Recipe Inventory: Automated real-time deduction of beans (g), milk (ml), syrups, and consumables per beverage sold with low-stock warnings\nShift Tracking & Z-Reading: Opening float, cash drops, discrepancy calculations, cashier drawer balancing, and automated shift close reports\nCustomer Loyalty & Rewards: Points accumulation engine, customer profile management, birthday perks, and QR code redemption\nMulti-Branch Architecture & Analytics: Real-time revenue dashboards, best-seller rankings, and sales velocity charts powered by Recharts\nGemini AI Business Assistant: Integrated @google/genai conversational assistant for revenue insights, stock optimization, and operational queries\nThermal Receipt & Invoice Generation: Built-in react-to-print formatting for ESC/POS receipt printers and digital invoices',
+    tags: 'React 19, TypeScript, Tailwind CSS, Firebase Firestore, Google Gemini API, Recharts, POS, KDS, Vite, Framer Motion, QR Code',
+    featured: 'true',
+    link: 'https://github.com/rgdlcatacutan02-beep/CoffeeGarage-POS-system',
+    order: '4',
+  },
+  {
+    id: 'itrs-hub',
+    title: 'ITRS Hub',
+    subtitle: 'IT Operations, PC Setup & Cloud Resource Portal',
+    category: 'Full-Stack Web App',
+    year: '2026',
+    role: 'Full-Stack Developer & Systems Architect',
+    description:
+      'A centralized modern IT Operations and PC Setup portal built with React 19, Vite, and TypeScript. Designed for managing standard department PC software configurations, technician work orders, credential vaults, and cloud-synchronized operations.',
+    highlights:
+      'Role-Based Access Control (RBAC): Super Admin, Admin, Staff/Technician, and Viewer tiers with granular administrative permissions\nStandard PC Setup Blueprints: Curated department application checklists, driver installers, and workstation onboarding guides\nEncrypted Credential Vault: Secure password manager and service credential storage with clipboard quick-copy capabilities\nWork Order & Task Management: Technician operational checklists, leave/day-off request workflows, and task approvals\nIT Operations Scratchpad: Quick memo and technician notes synchronized across sessions\nCloud Architecture & REST Layer: Asynchronous service layer with live telemetry, latency metrics, and Express REST backend\nCloud Backup & Restore: Instant JSON system state snapshots and recovery\nSleek Minimalist SaaS UI: Deep carbon & dark slate aesthetics with translucent glassmorphism (backdrop-blur-xl)',
+    tags: 'React 19, TypeScript, Vite, Tailwind CSS, Node.js, Express, REST API, RBAC, IT Operations, Systems Administration, Glassmorphism',
+    featured: 'true',
+    link: 'https://github.com/rgdlcatacutan02-beep/ITRS-hub',
+    order: '5',
   },
   {
     id: 'iot-fire-detection',
@@ -78,7 +126,7 @@ export const defaultProjects: ProjectItem[] = [
     tags: 'Raspberry Pi, Python, IoT Sensors, GSM Module, Video Streaming, Hardware Integration',
     featured: 'true',
     link: '',
-    order: '3',
+    order: '6',
   },
   {
     id: 'rai-assistant',
@@ -92,7 +140,7 @@ export const defaultProjects: ProjectItem[] = [
     tags: 'Raspberry Pi Zero, OpenAI / ChatGPT, OLED Display, Python, Speech Synthesis, Embedded Linux',
     featured: 'true',
     link: '',
-    order: '4',
+    order: '7',
   },
   {
     id: 'network-monitor-dashboard',
@@ -106,7 +154,7 @@ export const defaultProjects: ProjectItem[] = [
     tags: 'Network Diagnostics, POS Systems, Remote Support Tools, Server Maintenance, CCTV',
     featured: 'false',
     link: '',
-    order: '5',
+    order: '8',
   },
 ];
 
