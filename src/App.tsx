@@ -57,6 +57,7 @@ import {
   removeContactMessage,
   saveProjectsOrder,
   seedDefaultsToFirestore,
+  syncAllLocalToFirestore,
 } from './services/portfolioService';
 import { getAdminSession, clearAdminSession } from './services/adminAuthService';
 
@@ -505,10 +506,21 @@ export default function App() {
 
   // Manual Save All Action
   const handleSaveAll = async () => {
+    if (!user) {
+      showNotification('Note: You are in LOCAL MODE. Click "Connect Cloud" (top bar) to sync your changes to Cloud Firestore so all visitors and browsers see them!');
+    }
     setSyncing(true);
     try {
-      await saveProjectsOrder(projects);
-      await updatePortfolioProfile(profile);
+      showNotification('Saving and synchronizing all portfolio sections...');
+      await syncAllLocalToFirestore(
+        profile,
+        projects,
+        experiences,
+        education,
+        seminars,
+        skills,
+        certificates
+      );
       showNotification('All portfolio changes saved and synced successfully!');
     } catch (err) {
       console.error('Failed to save all changes:', err);
@@ -599,7 +611,17 @@ export default function App() {
                 }
                 setAdminUser(u.displayName || u.email || 'Admin');
                 setIsEditMode(true);
-                showNotification('Cloud connected! Live Firestore sync enabled.');
+                showNotification('Cloud connected! Uploading all your edits to Cloud Firestore...');
+                await syncAllLocalToFirestore(
+                  profile,
+                  projects,
+                  experiences,
+                  education,
+                  seminars,
+                  skills,
+                  certificates
+                );
+                showNotification('Success! All images, projects, and data are now live in Cloud Firestore across all devices and browsers!');
                 loadMessages();
               }
             } catch (err: unknown) {

@@ -680,3 +680,34 @@ export async function seedDefaultsToFirestore(): Promise<void> {
     await upsertCertificate(cert);
   }
 }
+
+// Synchronize all current in-memory / local portfolio data to Cloud Firestore
+export async function syncAllLocalToFirestore(
+  profile: PortfolioProfile,
+  projects: ProjectItem[],
+  experiences: ExperienceItem[],
+  education: EducationItem[],
+  seminars: SeminarItem[],
+  skills: SkillCategory[],
+  certificates: CertificateItem[]
+): Promise<void> {
+  await updatePortfolioProfile(profile);
+  for (const proj of projects) {
+    await upsertProject(proj);
+  }
+  for (const exp of experiences) {
+    await upsertExperience(exp);
+  }
+  for (const edu of education) {
+    await upsertEducation(edu);
+  }
+  for (const sem of seminars) {
+    await upsertSeminar(sem);
+  }
+  for (const cat of skills) {
+    await upsertSkillCategory(cat);
+  }
+  for (const cert of certificates) {
+    await upsertCertificate(cert);
+  }
+}
