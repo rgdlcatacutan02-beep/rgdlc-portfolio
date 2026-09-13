@@ -276,42 +276,57 @@ export default function App() {
 
   // Project Actions
   const handleSaveProject = async (project: ProjectItem) => {
-    await upsertProject(project);
+    let reindexed: ProjectItem[] = [];
     setProjects((prev) => {
+      let list: ProjectItem[];
       const exists = prev.some((p) => p.id === project.id);
-      let updated: ProjectItem[];
       if (exists) {
-        updated = prev.map((p) => (p.id === project.id ? project : p));
+        list = prev.map((p) => (p.id === project.id ? project : p));
       } else {
-        updated = [project, ...prev];
+        list = [project, ...prev];
       }
 
       // If set to spotlight position #1
       if (project.order === '1') {
-        const target = updated.find((p) => p.id === project.id);
-        const others = updated.filter((p) => p.id !== project.id);
+        const target = list.find((p) => p.id === project.id);
+        const others = list.filter((p) => p.id !== project.id);
         if (target) {
-          updated = [target, ...others];
-          saveProjectsOrder(updated);
-          return updated;
+          list = [target, ...others];
         }
       }
-      return updated;
+
+      reindexed = list.map((p, idx) => ({
+        ...p,
+        order: String(idx + 1),
+        featured: idx === 0 ? 'true' : p.featured,
+      }));
+      return reindexed;
     });
+
+    await saveProjectsOrder(reindexed);
     showNotification(`Project "${project.title}" saved successfully!`);
   };
 
   const handleReorderProjects = async (reordered: ProjectItem[]) => {
-    setProjects(reordered);
+    const indexed = reordered.map((p, idx) => ({
+      ...p,
+      order: String(idx + 1),
+      featured: idx === 0 ? 'true' : p.featured,
+    }));
+    setProjects(indexed);
     showNotification('Project showcase order updated!');
-    await saveProjectsOrder(reordered);
+    await saveProjectsOrder(indexed);
   };
 
   const handleSetSpotlightProject = async (projectId: string) => {
     const target = projects.find((p) => p.id === projectId);
     if (!target) return;
     const others = projects.filter((p) => p.id !== projectId);
-    const reordered = [target, ...others];
+    const reordered = [target, ...others].map((p, idx) => ({
+      ...p,
+      order: String(idx + 1),
+      featured: idx === 0 ? 'true' : p.featured,
+    }));
     setProjects(reordered);
     showNotification(`"${target.title}" is now the spotlight showcase project!`);
     await saveProjectsOrder(reordered);

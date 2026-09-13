@@ -264,15 +264,19 @@ export async function saveProjectsOrder(reordered: ProjectItem[]): Promise<void>
   const updated = reordered.map((p, idx) => ({
     ...p,
     order: String(idx + 1),
+    featured: idx === 0 ? 'true' : p.featured,
   }));
 
   safeSaveProjects(updated);
 
-  for (const proj of updated) {
+  // Write all updated project documents in parallel to eliminate slow sequential lag
+  const writes = updated.map((proj) => {
     const path = `projects/${proj.id}`;
     const docRef = doc(db, 'projects', proj.id);
-    await syncToFirestore(() => setDoc(docRef, proj, { merge: true }), OperationType.WRITE, path, `reorder project ${proj.title}`);
-  }
+    return syncToFirestore(() => setDoc(docRef, proj, { merge: true }), OperationType.WRITE, path, `reorder project ${proj.title}`);
+  });
+
+  await Promise.allSettled(writes);
 }
 
 // Fetch Experiences
