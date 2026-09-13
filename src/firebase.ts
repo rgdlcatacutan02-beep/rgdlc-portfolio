@@ -10,14 +10,41 @@ import {
 import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
 
-// Initialize Firebase App
-const app = initializeApp(firebaseConfig);
+interface FirebaseAppConfig {
+  apiKey?: string;
+  authDomain?: string;
+  projectId?: string;
+  storageBucket?: string;
+  messagingSenderId?: string;
+  appId?: string;
+  measurementId?: string;
+  firestoreDatabaseId?: string;
+  [key: string]: unknown;
+}
 
-// Initialize Firestore with specific database ID as strictly mandated
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+const config = firebaseConfig as FirebaseAppConfig;
+
+// Initialize Firebase App
+const app = initializeApp(config);
+
+// Initialize Firestore (handles both standard default database and custom database IDs)
+export const db =
+  config.firestoreDatabaseId && config.firestoreDatabaseId !== '(default)'
+    ? getFirestore(app, config.firestoreDatabaseId)
+    : getFirestore(app);
 
 // Initialize Auth
 export const auth = getAuth(app);
+
+// Initialize Analytics (safely in browser environment)
+export const analyticsPromise =
+  typeof window !== 'undefined' && config.measurementId
+    ? import('firebase/analytics')
+        .then(({ getAnalytics, isSupported }) =>
+          isSupported().then((supported) => (supported ? getAnalytics(app) : null))
+        )
+        .catch(() => null)
+    : null;
 
 // Google Auth Provider
 export const googleProvider = new GoogleAuthProvider();
