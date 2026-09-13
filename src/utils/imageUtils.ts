@@ -4,9 +4,9 @@
  */
 export function compressAndEncodeImage(
   file: File,
-  maxWidth = 1000,
-  maxHeight = 1000,
-  quality = 0.8
+  maxWidth = 800,
+  maxHeight = 600,
+  quality = 0.72
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     // Validate file type

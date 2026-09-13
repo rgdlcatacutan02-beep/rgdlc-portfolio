@@ -38,10 +38,33 @@ const SEMINARS_STORAGE_KEY = 'rg_portfolio_seminars';
 const CERTIFICATES_STORAGE_KEY = 'rg_portfolio_certificates';
 
 /**
+ * Safe localStorage writer that guarantees data is preserved even if browser quota is constrained.
+ * If quota is reached (e.g. from large base64 thumbnails), it saves a lightweight payload
+ * preserving all project details (title, links, descriptions, tags, order, roles) without crashing.
+ */
+function safeSaveProjects(projects: ProjectItem[]): void {
+  try {
+    localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(projects));
+  } catch (err) {
+    console.warn('LocalStorage quota limit reached, saving project data with lightweight image references:', err);
+    try {
+      const lightweight = projects.map((p) => ({
+        ...p,
+        imageUrl: p.imageUrl?.startsWith('data:') && p.imageUrl.length > 50000 ? '' : p.imageUrl,
+      }));
+      localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(lightweight));
+    } catch (e2) {
+      console.error('Critical storage warning: Could not save projects to localStorage:', e2);
+    }
+  }
+}
+
+/**
  * Robust cloud sync helper:
- * - If running in local admin session (auth.currentUser == null), gracefully bypasses
- *   remote Firestore writes without triggering 'permission-denied' security errors.
- * - If authenticated via Firebase/Google, performs remote write with graceful fallback.
+ * - Attempts to write directly to Cloud Firestore.
+ * - If user is signed in as portfolio owner, writes succeed with live cloud persistence.
+ * - If user is in local admin mode and rules allow it, writes succeed directly.
+ * - If Firestore permissions block it, catches gracefully and preserves data in browser storage.
  */
 async function syncToFirestore(
   writeFn: () => Promise<void>,
@@ -49,18 +72,14 @@ async function syncToFirestore(
   path: string,
   entityName: string
 ): Promise<void> {
-  if (!auth.currentUser) {
-    console.info(`[Local Admin] Stored ${entityName} in browser storage. Sign in with Google to sync with Cloud Firestore.`);
-    return;
-  }
-
-  // Safety timeout: Never freeze the UI for more than 3.5 seconds if Firestore is pending/connecting
+  // Safety timeout: Never freeze the UI for more than 4 seconds
   const timeoutPromise = new Promise<void>((_, reject) =>
-    setTimeout(() => reject(new Error('Cloud sync timeout: network slow or database pending initialization')), 3500)
+    setTimeout(() => reject(new Error('Cloud sync timeout: network slow or database pending initialization')), 4000)
   );
 
   try {
     await Promise.race([writeFn(), timeoutPromise]);
+    console.info(`[Firestore Sync] Successfully persisted ${entityName} to Cloud Firestore.`);
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error);
     if (
@@ -70,7 +89,7 @@ async function syncToFirestore(
       msg.includes('PERMISSION_DENIED') ||
       msg.includes('offline')
     ) {
-      console.warn(`[Firestore Sync] Cloud sync notice for ${path}: ${msg}. Data is safely preserved in local storage.`);
+      console.warn(`[Firestore Sync] Notice for ${path}: ${msg}. Data is safely preserved in browser local storage.`);
       return;
     }
     console.warn(`[Firestore Sync Warning] ${path}:`, error);
@@ -104,7 +123,11 @@ export async function getPortfolioProfile(): Promise<PortfolioProfile> {
       if (!merged.github || merged.github === 'https://github.com') {
         merged.github = defaultProfile.github;
       }
-      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(merged));
+      try {
+        localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(merged));
+      } catch {
+        // Ignore quota error for profile
+      }
       return merged;
     }
   } catch (error) {
@@ -131,25 +154,26 @@ export async function updatePortfolioProfile(profile: PortfolioProfile): Promise
   // Sync to Firestore
   const path = 'portfolio';
   const docRef = doc(db, path, 'main');
-  await syncToFirestore(() => setDoc(docRef, updated), OperationType.WRITE, PORTFOLIO_DOC, 'portfolio profile');
+  await syncToFirestore(() => setDoc(docRef, updated, { merge: true }), OperationType.WRITE, PORTFOLIO_DOC, 'portfolio profile');
 }
 
 // Fetch Projects
 export async function getProjects(): Promise<ProjectItem[]> {
-  // Check localStorage first
+  // 1. Check localStorage first
   try {
     const local = localStorage.getItem(PROJECTS_STORAGE_KEY);
     if (local) {
       const parsed = JSON.parse(local);
       if (Array.isArray(parsed) && parsed.length > 0) {
         let changed = false;
-        // Merge in any newly added default projects or links
+        // Merge in any missing default projects by ID, but NEVER overwrite user edits!
         for (const def of defaultProjects) {
           const existingIdx = parsed.findIndex((it: ProjectItem) => it.id === def.id);
           if (existingIdx === -1) {
             parsed.push(def);
             changed = true;
           } else {
+            // Only update link if the existing project has an empty link and default has a verified link
             if (!parsed[existingIdx].link && def.link) {
               parsed[existingIdx].link = def.link;
               changed = true;
@@ -157,7 +181,7 @@ export async function getProjects(): Promise<ProjectItem[]> {
           }
         }
         if (changed) {
-          localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(parsed));
+          safeSaveProjects(parsed);
         }
         return parsed.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));
       }
@@ -166,6 +190,7 @@ export async function getProjects(): Promise<ProjectItem[]> {
     console.warn('Could not parse local projects:', err);
   }
 
+  // 2. Fetch from Cloud Firestore if available
   const path = 'projects';
   try {
     const colRef = collection(db, path);
@@ -175,7 +200,6 @@ export async function getProjects(): Promise<ProjectItem[]> {
       snap.forEach((docSnap) => {
         items.push(docSnap.data() as ProjectItem);
       });
-      // Ensure any newly added default projects are merged in
       for (const def of defaultProjects) {
         const existingIdx = items.findIndex((it) => it.id === def.id);
         if (existingIdx === -1) {
@@ -185,19 +209,21 @@ export async function getProjects(): Promise<ProjectItem[]> {
         }
       }
       const sorted = items.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));
-      localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(sorted));
+      safeSaveProjects(sorted);
       return sorted;
     }
   } catch (error) {
     console.warn('Could not fetch projects from Firestore, using default CV projects:', error);
   }
 
+  // 3. Fallback to default verified projects
+  safeSaveProjects(defaultProjects);
   return defaultProjects;
 }
 
 // Save Project
 export async function upsertProject(project: ProjectItem): Promise<void> {
-  // Update localStorage immediately
+  // Update localStorage immediately and safely
   try {
     const current = await getProjects();
     const idx = current.findIndex((p) => p.id === project.id);
@@ -208,7 +234,7 @@ export async function upsertProject(project: ProjectItem): Promise<void> {
     } else {
       updated = [project, ...current];
     }
-    localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(updated));
+    safeSaveProjects(updated);
   } catch (err) {
     console.warn('Could not save project to localStorage:', err);
   }
@@ -223,7 +249,7 @@ export async function removeProject(projectId: string): Promise<void> {
   try {
     const current = await getProjects();
     const updated = current.filter((p) => p.id !== projectId);
-    localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(updated));
+    safeSaveProjects(updated);
   } catch (err) {
     console.warn('Could not remove project from localStorage:', err);
   }
@@ -240,11 +266,7 @@ export async function saveProjectsOrder(reordered: ProjectItem[]): Promise<void>
     order: String(idx + 1),
   }));
 
-  try {
-    localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(updated));
-  } catch (err) {
-    console.warn('Could not save reordered projects to localStorage:', err);
-  }
+  safeSaveProjects(updated);
 
   for (const proj of updated) {
     const path = `projects/${proj.id}`;
@@ -668,8 +690,10 @@ export async function removeCertificate(certId: string): Promise<void> {
 // Seed all default CV items to Firestore
 export async function seedDefaultsToFirestore(): Promise<void> {
   await updatePortfolioProfile(defaultProfile);
+  safeSaveProjects(defaultProjects);
   for (const proj of defaultProjects) {
-    await upsertProject(proj);
+    const docRef = doc(db, 'projects', proj.id);
+    await syncToFirestore(() => setDoc(docRef, proj, { merge: true }), OperationType.WRITE, `projects/${proj.id}`, `project ${proj.title}`);
   }
   for (const exp of defaultExperiences) {
     await upsertExperience(exp);
@@ -699,8 +723,10 @@ export async function syncAllLocalToFirestore(
   certificates: CertificateItem[]
 ): Promise<void> {
   await updatePortfolioProfile(profile);
+  safeSaveProjects(projects);
   for (const proj of projects) {
-    await upsertProject(proj);
+    const docRef = doc(db, 'projects', proj.id);
+    await syncToFirestore(() => setDoc(docRef, proj, { merge: true }), OperationType.WRITE, `projects/${proj.id}`, `project ${proj.title}`);
   }
   for (const exp of experiences) {
     await upsertExperience(exp);

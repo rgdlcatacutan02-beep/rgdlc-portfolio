@@ -47,7 +47,7 @@ export const defaultProjects: ProjectItem[] = [
       'Vehicle Inventory: Advanced multi-criteria filtering by make, model, price, mileage, body style, fuel type, and transmission\nFinancing Calculator: Real-time calculation engine for loan principal, down-payment, interest rates, and monthly amortization\nTrade-In & Appraisal: Multi-step vehicle appraisal workflows with Cloud Firestore persistence and automated WhatsApp lead routing\nTest Drive Booking: Online scheduling system for vehicle test drives and showroom consultations\nAdmin Dashboard: Secure RBAC authentication with complete vehicle inventory CRUD operations\nLead Management Pipeline: Centralized tracking dashboard for financing, trade-in, and customer contact inquiries\nDealership Business Portal: Dynamic management for dealership info, operating hours, WhatsApp routing, and loan parameters\nReal-time Cloud Sync: Low-latency Firestore synchronization for instant vehicle catalog and lead updates',
     tags: 'React, TypeScript, Tailwind CSS, Node.js, Express, Firebase, Cloud Firestore, Firebase Auth, Cloud Storage, Vite, Lucide React, Motion',
     featured: 'true',
-    link: '',
+    link: 'https://github.com/rgdlcatacutan02-beep/dunks-auto-sales',
     order: '1',
   },
   {
@@ -117,43 +117,49 @@ export const defaultProjects: ProjectItem[] = [
   {
     id: 'iot-fire-detection',
     title: 'IoT-Based Fire Detection System',
+    subtitle: 'Edge Hardware & Automated GSM Early Hazard Alert Platform',
     category: 'IoT & Embedded Systems',
     year: '2024',
+    role: 'Embedded Systems & Hardware Engineer',
     description:
       'An intelligent safety monitoring system engineered using Raspberry Pi, specialized sensors, and live camera streaming to detect fire hazards early and alert users in real time.',
     highlights:
       'Developed a fire detection system using Raspberry Pi and high-sensitivity sensors\nIntegrated live video streaming and automated GSM SMS alert features\nDesigned a responsive web interface for real-time monitoring and emergency notifications\nOptimized sensor thresholds to minimize false alarms in challenging environments',
     tags: 'Raspberry Pi, Python, IoT Sensors, GSM Module, Video Streaming, Hardware Integration',
     featured: 'true',
-    link: '',
+    link: 'https://github.com/rgdlcatacutan02-beep/iot-fire-detection-system',
     order: '6',
   },
   {
     id: 'rai-assistant',
     title: 'RAI: Raspberry AI Assistant with OLED Eyes',
+    subtitle: 'ChatGPT-Powered Smart Companion with Animated OLED Interface',
     category: 'AI & Robotics',
     year: '2024',
+    role: 'Embedded AI & Firmware Developer',
     description:
       'A ChatGPT-powered smart companion device built on Raspberry Pi Zero featuring interactive OLED eyes with animated expressions and voice synthesis.',
     highlights:
       'Engineered an expressive ChatGPT-Powered OLED Eyed AI Assistant for Raspberry Pi Zero\nCreated dynamic micro-animations for emotional states and interaction feedback\nIntegrated OpenAI API for voice and prompt reasoning\nEngineered lightweight embedded python services for smooth low-power performance',
     tags: 'Raspberry Pi Zero, OpenAI / ChatGPT, OLED Display, Python, Speech Synthesis, Embedded Linux',
     featured: 'true',
-    link: '',
+    link: 'https://github.com/rgdlcatacutan02-beep/rai-raspberry-ai-assistant',
     order: '7',
   },
   {
     id: 'network-monitor-dashboard',
     title: 'Enterprise Store & Network Monitoring Setup',
+    subtitle: 'Mission-Critical Retail Infrastructure & POS Diagnostics Suite',
     category: 'Infrastructure & Support',
     year: '2025-2026',
+    role: 'Network Engineer & Systems Administrator',
     description:
       'Infrastructure diagnostics and proactive server/workstation monitoring workflow implemented for store and POS environments ensuring 99.9% operational uptime.',
     highlights:
       'Maintained POS server availability, system health, and failover network routing\nStandardized remote diagnostics toolchains reducing average ticket resolution time by 35%\nConfigured redundant surveillance CCTV backup systems and network switches',
     tags: 'Network Diagnostics, POS Systems, Remote Support Tools, Server Maintenance, CCTV',
     featured: 'false',
-    link: '',
+    link: 'https://github.com/rgdlcatacutan02-beep/enterprise-store-network-monitoring',
     order: '8',
   },
 ];
