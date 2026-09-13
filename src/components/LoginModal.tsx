@@ -60,8 +60,15 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     } catch (err: unknown) {
       console.error('Google Sign-in error:', err);
       const msg = err instanceof Error ? err.message : String(err);
-      if (!msg.includes('closed-by-user') && !msg.includes('popup-closed')) {
-        setError('Google Sign-in failed. You can sign in using your admin credentials below.');
+      if (msg.includes('closed-by-user') || msg.includes('popup-closed')) {
+        return;
+      }
+      if (msg.includes('unauthorized-domain')) {
+        setError('Domain not authorized: Please add this domain (e.g. vercel.app) to Firebase Console > Authentication > Settings > Authorized domains.');
+      } else if (msg.includes('popup-blocked')) {
+        setError('Sign-in popup was blocked by your browser. Please allow popups for this site and try again.');
+      } else {
+        setError(`Google Sign-in failed: ${msg}`);
       }
     } finally {
       setLoading(false);
