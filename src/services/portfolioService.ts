@@ -54,19 +54,26 @@ async function syncToFirestore(
     return;
   }
 
+  // Safety timeout: Never freeze the UI for more than 3.5 seconds if Firestore is pending/connecting
+  const timeoutPromise = new Promise<void>((_, reject) =>
+    setTimeout(() => reject(new Error('Cloud sync timeout: network slow or database pending initialization')), 3500)
+  );
+
   try {
-    await writeFn();
+    await Promise.race([writeFn(), timeoutPromise]);
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error);
     if (
+      msg.includes('Cloud sync timeout') ||
       msg.includes('Missing or insufficient permissions') ||
       msg.includes('permission-denied') ||
-      msg.includes('PERMISSION_DENIED')
+      msg.includes('PERMISSION_DENIED') ||
+      msg.includes('offline')
     ) {
-      console.warn(`[Firestore Sync] Cloud permission denied for ${path}. Data is safely preserved in local storage.`);
+      console.warn(`[Firestore Sync] Cloud sync notice for ${path}: ${msg}. Data is safely preserved in local storage.`);
       return;
     }
-    handleFirestoreError(error, operationType, path);
+    console.warn(`[Firestore Sync Warning] ${path}:`, error);
   }
 }
 
