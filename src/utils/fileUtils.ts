@@ -66,6 +66,7 @@ export function readPdfAsBase64(
 
 /**
  * Sanitizes URLs to prevent DOM-based XSS attacks via javascript:, vbscript:, data:text/html, etc.
+ * Disallows SVG data URIs (data:image/svg+xml) to prevent embedded script execution.
  */
 export function sanitizeUrl(url: string | undefined | null): string {
   if (!url || typeof url !== 'string') return '#';
@@ -76,14 +77,13 @@ export function sanitizeUrl(url: string | undefined | null): string {
     return trimmed;
   }
 
-  // Allow safe document & image data URIs
+  // Allow safe document & raster image data URIs only (SVG is intentionally excluded to prevent XSS)
   if (
     trimmed.startsWith('data:application/pdf') ||
     trimmed.startsWith('data:image/png') ||
     trimmed.startsWith('data:image/jpeg') ||
     trimmed.startsWith('data:image/webp') ||
-    trimmed.startsWith('data:image/gif') ||
-    trimmed.startsWith('data:image/svg+xml')
+    trimmed.startsWith('data:image/gif')
   ) {
     return trimmed;
   }
@@ -116,7 +116,8 @@ export function triggerPdfDownload(
     try {
       const arr = safeUrl.split(',');
       const mimeMatch = arr[0].match(/:(.*?);/);
-      const mime = mimeMatch ? mimeMatch[1] : 'application/pdf';
+      const safeMimes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+      const mime = mimeMatch && safeMimes.includes(mimeMatch[1]) ? mimeMatch[1] : 'application/pdf';
       const bstr = atob(arr[1]);
       let n = bstr.length;
       const u8arr = new Uint8Array(n);
@@ -159,7 +160,8 @@ export function openPdfPreview(pdfUrl: string | undefined | null) {
     try {
       const arr = safeUrl.split(',');
       const mimeMatch = arr[0].match(/:(.*?);/);
-      const mime = mimeMatch ? mimeMatch[1] : 'application/pdf';
+      const safeMimes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+      const mime = mimeMatch && safeMimes.includes(mimeMatch[1]) ? mimeMatch[1] : 'application/pdf';
       const bstr = atob(arr[1]);
       let n = bstr.length;
       const u8arr = new Uint8Array(n);
@@ -168,7 +170,7 @@ export function openPdfPreview(pdfUrl: string | undefined | null) {
       }
       const blob = new Blob([u8arr], { type: mime });
       const blobUrl = URL.createObjectURL(blob);
-      window.open(blobUrl, '_blank');
+      window.open(blobUrl, '_blank', 'noopener,noreferrer');
       setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
       return;
     } catch (e) {
@@ -176,5 +178,5 @@ export function openPdfPreview(pdfUrl: string | undefined | null) {
     }
   }
 
-  window.open(safeUrl, '_blank');
+  window.open(safeUrl, '_blank', 'noopener,noreferrer');
 }

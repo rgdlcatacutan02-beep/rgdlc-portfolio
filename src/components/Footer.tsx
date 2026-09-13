@@ -6,7 +6,6 @@ import { User } from '../firebase';
 interface FooterProps {
   profile: PortfolioProfile;
   user?: User | null;
-  adminUser?: string | null;
   isEditMode?: boolean;
   onOpenLogin?: () => void;
   onToggleEditMode?: () => void;
@@ -16,13 +15,12 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({
   profile,
   user,
-  adminUser,
   isEditMode,
   onOpenLogin,
   onToggleEditMode,
   onLogout,
 }) => {
-  const isLoggedIn = Boolean(user || adminUser);
+  const isLoggedIn = Boolean(user);
   const clickCountRef = useRef(0);
   const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
 

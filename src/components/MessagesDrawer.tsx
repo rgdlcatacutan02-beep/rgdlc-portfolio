@@ -78,7 +78,7 @@ export const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                         <span>{msg.name}</span>
                       </div>
                       <a
-                        href={`mailto:${msg.email}`}
+                        href={`mailto:${encodeURIComponent(msg.email)}`}
                         className="text-[11px] text-[#028090] dark:text-[#2dd4bf] hover:underline block font-mono-code"
                       >
                         {msg.email}
@@ -110,7 +110,7 @@ export const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                       })}
                     </span>
                     <a
-                      href={`mailto:${msg.email}?subject=Re: Inquiry on Portfolio&body=Hi ${msg.name},`}
+                      href={`mailto:${encodeURIComponent(msg.email)}?subject=${encodeURIComponent('Re: Inquiry on Portfolio')}&body=${encodeURIComponent(`Hi ${msg.name},\n\n`)}`}
                       className="text-[#004643] dark:text-[#2dd4bf] font-bold hover:underline"
                     >
                       Reply via Email &rarr;

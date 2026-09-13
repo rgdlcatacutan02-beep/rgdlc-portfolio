@@ -59,7 +59,6 @@ import {
   seedDefaultsToFirestore,
   syncAllLocalToFirestore,
 } from './services/portfolioService';
-import { getAdminSession, clearAdminSession } from './services/adminAuthService';
 
 import { Navbar } from './components/Navbar';
 import { SkillsBanner } from './components/SkillsBanner';
@@ -76,7 +75,6 @@ import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 
 import { LoginModal } from './components/LoginModal';
-import { ChangeCredentialsModal } from './components/ChangeCredentialsModal';
 import { EditProfileModal } from './components/EditProfileModal';
 import { EditProjectModal } from './components/EditProjectModal';
 import { EditExperienceModal } from './components/EditExperienceModal';
@@ -99,20 +97,15 @@ export default function App() {
   const [certificates, setCertificates] = useState<CertificateItem[]>(defaultCertificates);
   const [messages, setMessages] = useState<ContactMessage[]>([]);
 
-  // Auth & UI state
+  // Auth & UI state (Strictly Google Cloud Authentication)
   const [user, setUser] = useState<User | null>(null);
-  const [adminUser, setAdminUser] = useState<string | null>(() => {
-    const session = getAdminSession();
-    return session ? session.username : null;
-  });
-  const [isEditMode, setIsEditMode] = useState<boolean>(() => Boolean(getAdminSession()));
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [syncing, setSyncing] = useState<boolean>(false);
   const [notification, setNotification] = useState<string | null>(null);
 
   // Modals state
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isChangeCredsOpen, setIsChangeCredsOpen] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isManageCvOpen, setIsManageCvOpen] = useState(false);
   const [isEditEligibilityOpen, setIsEditEligibilityOpen] = useState(false);
@@ -145,34 +138,26 @@ export default function App() {
     }, 4000);
   };
 
-  // Auth listener for Firebase and local admin session
+  // Auth listener for Firebase Google Cloud Auth
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
         if (isAuthorizedOwner(currentUser)) {
           setIsEditMode(true);
-          setAdminUser(currentUser.displayName || currentUser.email || 'Admin');
           loadMessages();
         } else {
           // Unrecognized account: immediately de-escalate and sign out
           setIsEditMode(false);
-          setAdminUser(null);
           logoutUser().catch(console.error);
         }
-      } else if (!adminUser) {
+      } else {
         setIsEditMode(false);
+        setMessages([]);
       }
     });
     return () => unsubscribe();
-  }, [adminUser]);
-
-  // Load messages if admin session is active
-  useEffect(() => {
-    if (adminUser) {
-      loadMessages();
-    }
-  }, [adminUser]);
+  }, []);
 
   // Secret Admin Access: Keyboard shortcut (Ctrl/Cmd + Shift + A) and URL Hash (#admin / #login)
   useEffect(() => {
@@ -230,7 +215,7 @@ export default function App() {
     loadPortfolioData();
   }, []);
 
-  // Fetch messages if user is logged in
+  // Fetch messages if owner is logged in
   const loadMessages = async () => {
     try {
       const msgs = await getContactMessages();
@@ -241,26 +226,18 @@ export default function App() {
   };
 
   // Auth actions
-  const handleAdminLoginSuccess = (loggedInUsername: string) => {
-    setAdminUser(loggedInUsername);
+  const handleAdminLoginSuccess = (loggedInName: string) => {
     setIsEditMode(true);
-    showNotification(`Welcome back, ${loggedInUsername}! Admin dashboard unlocked.`);
+    showNotification(`Welcome back, ${loggedInName}! Google Cloud Admin dashboard unlocked.`);
     loadMessages();
-  };
-
-  const handleCredentialsChanged = (newUsername: string) => {
-    setAdminUser(newUsername);
-    showNotification(`Credentials updated. Current admin: ${newUsername}`);
   };
 
   const handleLogout = async () => {
     try {
-      clearAdminSession();
-      setAdminUser(null);
-      if (user) {
-        await logoutUser();
-      }
+      await logoutUser();
+      setUser(null);
       setIsEditMode(false);
+      setMessages([]);
       showNotification('Signed out from Admin Dashboard.');
     } catch (err: unknown) {
       console.error('Logout error:', err);
@@ -578,8 +555,8 @@ export default function App() {
         onSecretAdminTrigger={() => setIsLoginModalOpen(true)}
       />
 
-      {/* Admin Action Bar if user or adminUser is authenticated and edit mode is active */}
-      {(user || adminUser) && isEditMode && (
+      {/* Admin Action Bar if user is authenticated as owner and edit mode is active */}
+      {user && isAuthorizedOwner(user) && isEditMode && (
         <AdminBar
           onEditProfile={() => setIsEditProfileOpen(true)}
           onEditEligibility={() => setIsEditEligibilityOpen(true)}
@@ -607,43 +584,12 @@ export default function App() {
           }}
           onSeedDefaults={handleSeedDefaults}
           onSaveAll={handleSaveAll}
-          userEmail={adminUser ? `${adminUser} (Admin)` : user?.email || 'admin'}
+          userEmail={user.email || AUTHORIZED_OWNER_EMAIL}
           syncing={syncing}
           onOpenMessages={() => setIsMessagesDrawerOpen(true)}
           unreadCount={messages.length}
           onLogout={handleLogout}
           onToggleEditMode={() => setIsEditMode(!isEditMode)}
-          onChangeCredentials={() => setIsChangeCredsOpen(true)}
-          isCloudConnected={Boolean(user)}
-          onConnectCloud={async () => {
-            try {
-              const u = await loginWithGoogle();
-              if (u) {
-                if (!isAuthorizedOwner(u)) {
-                  await logoutUser();
-                  showNotification(`Access denied: Only verified owner (${AUTHORIZED_OWNER_EMAIL}) can sync to Cloud Firestore.`);
-                  return;
-                }
-                setAdminUser(u.displayName || u.email || 'Admin');
-                setIsEditMode(true);
-                showNotification('Cloud connected! Uploading all your edits to Cloud Firestore...');
-                await syncAllLocalToFirestore(
-                  profile,
-                  projects,
-                  experiences,
-                  education,
-                  seminars,
-                  skills,
-                  certificates
-                );
-                showNotification('Success! All images, projects, and data are now live in Cloud Firestore across all devices and browsers!');
-                loadMessages();
-              }
-            } catch (err: unknown) {
-              console.error('Cloud connect failed:', err);
-              showNotification('Google Sign-in was cancelled or failed.');
-            }
-          }}
         />
       )}
 
@@ -764,7 +710,6 @@ export default function App() {
       <Footer
         profile={profile}
         user={user}
-        adminUser={adminUser}
         isEditMode={isEditMode}
         onOpenLogin={() => setIsLoginModalOpen(true)}
         onToggleEditMode={() => setIsEditMode(!isEditMode)}
@@ -776,14 +721,6 @@ export default function App() {
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
         onSuccess={handleAdminLoginSuccess}
-      />
-
-      {/* Change Admin Credentials Modal */}
-      <ChangeCredentialsModal
-        isOpen={isChangeCredsOpen}
-        onClose={() => setIsChangeCredsOpen(false)}
-        onSuccess={handleCredentialsChanged}
-        currentUsername={adminUser || 'admin'}
       />
 
       {/* Editor Modals */}
