@@ -99,14 +99,21 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
                 <span>Core Discipline &amp; Philosophy</span>
               </div>
               <h3 className="text-2xl font-bold text-[#004643] dark:text-white font-['Space_Grotesk'] leading-snug">
-                Bridging Physical Hardware &amp; Scalable Software
+                {profile.title ? `Bridging Physical Hardware & ${profile.title}` : 'Bridging Physical Hardware & Scalable Software'}
               </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                As a Computer Engineer, my work centers on holistic system reliability. Rather than treating software and infrastructure as separate silos, I build unified solutions—whether configuring resilient router topologies for 24/7 business operations or programming responsive React applications backed by real-time cloud data.
-              </p>
-              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                My approach combines disciplined troubleshooting with modern tooling, striving for clean architectures that are performant, maintainable, and robust against unexpected network or system conditions.
-              </p>
+              {profile.summary ? (
+                <div className="space-y-3">
+                  {profile.summary.split('\n').filter(Boolean).map((para, i) => (
+                    <p key={i} className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                      {para}
+                    </p>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  As a Computer Engineer, my work centers on holistic system reliability. Rather than treating software and infrastructure as separate silos, I build unified solutions—whether configuring resilient router topologies for 24/7 business operations or programming responsive React applications backed by real-time cloud data.
+                </p>
+              )}
             </div>
 
             {/* Standards Checklist */}
