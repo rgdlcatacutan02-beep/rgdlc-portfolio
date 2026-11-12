@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { PortfolioProfile } from '../types';
 import { submitContactMessage } from '../services/portfolioService';
+import { isEmailForwardingConfigured, sendContactEmail } from '../services/emailService';
 import { triggerPdfDownload, openPdfPreview } from '../utils/fileUtils';
 
 interface ContactSectionProps {
@@ -64,7 +65,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
       const elapsed = Date.now() - parseInt(lastSentStr, 10);
       if (elapsed < 60000) {
         const remainingSec = Math.ceil((60000 - elapsed) / 1000);
-        setErrorMessage(`Transmission cooldown active. Please wait ${remainingSec}s before sending another message.`);
+        setErrorMessage(`Please wait ${remainingSec}s before sending another message.`);
         return;
       }
     }
@@ -99,19 +100,33 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
     try {
       const messageId = `msg-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-      await submitContactMessage({
-        id: messageId,
-        name: trimmedName,
-        email: trimmedEmail,
-        message: trimmedMessage,
-        createdAt: new Date().toISOString(),
-      });
+      // Email to Gmail and the Firestore backup run in parallel; the message
+      // counts as delivered if either one succeeds.
+      const deliveries: Promise<void>[] = [
+        submitContactMessage({
+          id: messageId,
+          name: trimmedName,
+          email: trimmedEmail,
+          message: trimmedMessage,
+          createdAt: new Date().toISOString(),
+        }),
+      ];
+      if (isEmailForwardingConfigured()) {
+        deliveries.push(sendContactEmail({ name: trimmedName, email: trimmedEmail, message: trimmedMessage }));
+      }
+      const results = await Promise.allSettled(deliveries);
+      results
+        .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
+        .forEach((r) => console.error('Contact delivery failed:', r.reason));
+      if (!results.some((r) => r.status === 'fulfilled')) {
+        throw new Error('All contact delivery channels failed.');
+      }
       sessionStorage.setItem('rg_portfolio_msg_last', Date.now().toString());
       setSubmitted(true);
       setFormData({ name: '', email: '', message: '' });
     } catch (err: unknown) {
       console.error('Failed to submit message:', err);
-      setErrorMessage('Could not send message right now. Please email directly.');
+      setErrorMessage(`Could not send your message right now. Please email me directly at ${profile.email}.`);
     } finally {
       setLoading(false);
     }
@@ -142,10 +157,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
             <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-slate-900/80 p-6 sm:p-8 shadow-sm space-y-6">
               <div className="space-y-1">
                 <h3 className="text-xl font-bold text-[#004643] dark:text-white font-['Space_Grotesk']">
-                  Send a Direct Transmission
+                  Send me a message
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                  Messages are sent directly to Regie's verified inbox and stored securely.
+                  It goes straight to my Gmail. I usually reply within 24 hours.
                 </p>
               </div>
 
@@ -153,10 +168,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 p-6 text-center space-y-3 animate-in fade-in duration-300">
                   <CheckCircle className="w-10 h-10 text-emerald-600 dark:text-emerald-400 mx-auto" />
                   <h4 className="text-base font-bold text-emerald-900 dark:text-emerald-200">
-                    Message Sent Successfully!
+                    Message sent!
                   </h4>
                   <p className="text-xs sm:text-sm text-emerald-700 dark:text-emerald-300 max-w-md mx-auto">
-                    Thank you for reaching out. Regie will get back to you promptly at the provided email address.
+                    Thanks for reaching out. I'll reply to the email address you provided.
                   </p>
                   <button
                     onClick={() => setSubmitted(false)}
@@ -217,12 +232,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
                   <div className="space-y-1.5">
                     <label className="block text-xs font-mono-code font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-                      Message / Project Details
+                      Message
                     </label>
                     <textarea
                       required
                       rows={5}
-                      placeholder="Discussing engineering opportunities, technical challenges, or project specs..."
+                      placeholder="Tell me about the role or project..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-950 px-4 py-3 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:border-[#004643] dark:focus:border-[#2dd4bf] focus:bg-white dark:focus:bg-slate-950 focus:outline-none transition-colors resize-y"
@@ -235,11 +250,11 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-[#004643] hover:bg-[#028090] dark:bg-[#2dd4bf] dark:hover:bg-[#2dd4bf]/90 dark:text-[#070b14] text-white font-bold px-8 py-3 text-sm shadow-md shadow-[#004643]/20 dark:shadow-[#2dd4bf]/20 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50"
                   >
                     {loading ? (
-                      <span>Transmitting...</span>
+                      <span>Sending...</span>
                     ) : (
                       <>
                         <Send className="w-4 h-4" />
-                        <span>Dispatch Message</span>
+                        <span>Send Message</span>
                       </>
                     )}
                   </button>
