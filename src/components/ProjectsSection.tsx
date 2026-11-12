@@ -9,7 +9,6 @@ import {
   Search,
   CheckCircle,
   X,
-  Sparkles,
   Terminal,
   Maximize2,
   Layers,
@@ -391,7 +390,6 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                           )}
                           {project.featured === 'true' && !isMaster && (
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-700/60 text-amber-800 dark:text-amber-300 text-[10px] font-mono-code font-bold">
-                              <Sparkles className="w-2.5 h-2.5 text-amber-500" />
                               FEATURED
                             </span>
                           )}

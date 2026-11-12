@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { ShieldCheck, ArrowUp, Sparkles, LogOut } from 'lucide-react';
+import { ShieldCheck, ArrowUp, LogOut } from 'lucide-react';
 import { PortfolioProfile } from '../types';
 import { User } from '../firebase';
 
@@ -88,7 +88,6 @@ export const Footer: React.FC<FooterProps> = ({
                   }`}
                   title="Toggle Admin Editor"
                 >
-                  <Sparkles className="h-3 w-3" />
                   <span>{isEditMode ? 'Editing Active' : 'Admin Panel'}</span>
                 </button>
                 <button
