@@ -267,6 +267,29 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             </div>
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="font-semibold text-slate-300">Upwork URL</label>
+              <input
+                type="url"
+                placeholder="https://www.upwork.com/freelancers/~..."
+                value={formData.upwork || ''}
+                onChange={(e) => setFormData({ ...formData, upwork: e.target.value })}
+                className="w-full rounded-xl border border-slate-800 bg-slate-950 p-2.5 text-slate-100 focus:border-cyan-500 focus:outline-none"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="font-semibold text-slate-300">JobStreet URL</label>
+              <input
+                type="url"
+                placeholder="https://ph.jobstreet.com/profiles/..."
+                value={formData.jobstreet || ''}
+                onChange={(e) => setFormData({ ...formData, jobstreet: e.target.value })}
+                className="w-full rounded-xl border border-slate-800 bg-slate-950 p-2.5 text-slate-100 focus:border-cyan-500 focus:outline-none"
+              />
+            </div>
+          </div>
+
           {/* Quick Shortcuts to CV and CSC Eligibility Manager */}
           {(onOpenManageCv || onOpenEditEligibility) && (
             <div className="flex flex-wrap items-center gap-2.5 p-3 rounded-xl border border-slate-800 bg-slate-950/60">

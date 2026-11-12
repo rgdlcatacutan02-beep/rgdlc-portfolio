@@ -10,12 +10,20 @@ import {
   ShieldCheck,
   Github,
   Linkedin,
+  BriefcaseBusiness,
   Terminal,
   Download,
   Maximize2,
   X,
 } from 'lucide-react';
 import { PortfolioProfile } from '../types';
+
+// Upwork brand mark (Simple Icons, CC0); lucide-react has no Upwork icon.
+const UpworkIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+    <path d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06 1.492 0 2.703 1.212 2.703 2.703-.001 1.489-1.212 2.702-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.366-1.22-1.834-2.148-4.036-2.687-5.892H7.828v7.112c-.002 1.406-1.141 2.546-2.547 2.548-1.405-.002-2.543-1.143-2.545-2.548V3.492H0v7.112c0 2.914 2.37 5.303 5.281 5.303 2.913 0 5.283-2.389 5.283-5.303v-1.19c.529 1.107 1.182 2.229 1.974 3.221l-1.673 7.873h2.797l1.213-5.71c1.063.679 2.285 1.109 3.686 1.109 3 0 5.439-2.452 5.439-5.45 0-3-2.439-5.439-5.439-5.439z" />
+  </svg>
+);
 import { triggerPdfDownload, sanitizeUrl } from '../utils/fileUtils';
 
 interface HeroProps {
@@ -187,32 +195,28 @@ export const Hero: React.FC<HeroProps> = ({
                 <span>Download CV</span>
               </button>
 
-              {/* Social Channels (GitHub & LinkedIn) */}
+              {/* Social Channels (GitHub, LinkedIn, Upwork, JobStreet) */}
               <div className="flex items-center gap-2 pl-2 sm:border-l sm:border-slate-200 dark:sm:border-slate-800 sm:ml-2">
-                {profile.github && (
-                  <a
-                    href={sanitizeUrl(profile.github)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2.5 rounded-full border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#004643] dark:hover:text-white hover:border-[#004643]/50 dark:hover:border-[#028090]/50 hover:bg-slate-50 dark:hover:bg-slate-800 hover:scale-110 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200"
-                    title="GitHub"
-                    aria-label="GitHub Profile"
-                  >
-                    <Github className="w-4 h-4" />
-                  </a>
-                )}
-                {profile.linkedin && (
-                  <a
-                    href={sanitizeUrl(profile.linkedin)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2.5 rounded-full border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#004643] dark:hover:text-white hover:border-[#004643]/50 dark:hover:border-[#028090]/50 hover:bg-slate-50 dark:hover:bg-slate-800 hover:scale-110 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200"
-                    title="LinkedIn"
-                    aria-label="LinkedIn Profile"
-                  >
-                    <Linkedin className="w-4 h-4" />
-                  </a>
-                )}
+                {[
+                  { url: profile.github, label: 'GitHub', icon: <Github className="w-4 h-4" /> },
+                  { url: profile.linkedin, label: 'LinkedIn', icon: <Linkedin className="w-4 h-4" /> },
+                  { url: profile.upwork, label: 'Upwork', icon: <UpworkIcon className="w-4 h-4" /> },
+                  { url: profile.jobstreet, label: 'JobStreet', icon: <BriefcaseBusiness className="w-4 h-4" /> },
+                ]
+                  .filter((s) => s.url)
+                  .map((s) => (
+                    <a
+                      key={s.label}
+                      href={sanitizeUrl(s.url!)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2.5 rounded-full border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#004643] dark:hover:text-white hover:border-[#004643]/50 dark:hover:border-[#028090]/50 hover:bg-slate-50 dark:hover:bg-slate-800 hover:scale-110 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200"
+                      title={s.label}
+                      aria-label={`${s.label} Profile`}
+                    >
+                      {s.icon}
+                    </a>
+                  ))}
               </div>
             </div>
           </div>
