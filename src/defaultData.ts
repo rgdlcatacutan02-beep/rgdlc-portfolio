@@ -30,6 +30,8 @@ export const defaultProfile: PortfolioProfile = {
   civilServiceEligibility: defaultCivilServiceEligibility,
   github: 'https://github.com/rgdlcatacutan02-beep',
   linkedin: 'https://www.linkedin.com/in/regie-catacutan-aa8553373',
+  upwork: 'https://www.upwork.com/freelancers/~013ec08b907d459e02',
+  jobstreet: 'https://ph.jobstreet.com/profiles/regie-catacutan-08fmp2k4s2',
   updatedAt: new Date().toISOString(),
 };
 

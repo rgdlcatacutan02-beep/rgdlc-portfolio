@@ -27,6 +27,8 @@ export interface PortfolioProfile {
   civilServiceEligibility?: CivilServiceEligibility;
   github?: string;
   linkedin?: string;
+  upwork?: string;
+  jobstreet?: string;
   updatedAt?: string;
 }
 
