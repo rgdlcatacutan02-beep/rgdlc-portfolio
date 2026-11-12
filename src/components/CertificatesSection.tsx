@@ -307,7 +307,7 @@ export const CertificatesSection: React.FC<CertificatesSectionProps> = ({
                     ) : (
                       <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
                         <CheckCircle2 className="h-3.5 w-3.5" />
-                        <span>Officially Conferred &amp; Verified</span>
+                        <span>Copy available on request</span>
                       </span>
                     )}
 

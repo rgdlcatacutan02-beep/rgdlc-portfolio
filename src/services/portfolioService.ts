@@ -38,6 +38,32 @@ const SEMINARS_STORAGE_KEY = 'rg_portfolio_seminars';
 const CERTIFICATES_STORAGE_KEY = 'rg_portfolio_certificates';
 
 /**
+ * Content cache version. Every getter reads localStorage before Firestore, so a
+ * returning visitor would otherwise keep seeing stale content forever. Bump this
+ * whenever defaultData.ts or the Firestore content changes in a deploy.
+ */
+const CONTENT_VERSION = '2026-11-12';
+const CONTENT_VERSION_KEY = 'rg_portfolio_content_version';
+
+(function invalidateStaleContentCache() {
+  try {
+    if (localStorage.getItem(CONTENT_VERSION_KEY) === CONTENT_VERSION) return;
+    [
+      PROFILE_STORAGE_KEY,
+      PROJECTS_STORAGE_KEY,
+      EXPERIENCES_STORAGE_KEY,
+      EDUCATION_STORAGE_KEY,
+      SEMINARS_STORAGE_KEY,
+      CERTIFICATES_STORAGE_KEY,
+      'rg_portfolio_skills',
+    ].forEach((key) => localStorage.removeItem(key));
+    localStorage.setItem(CONTENT_VERSION_KEY, CONTENT_VERSION);
+  } catch {
+    // Storage unavailable (private mode, blocked): getters fall back to Firestore/defaults.
+  }
+})();
+
+/**
  * Safe localStorage writer that guarantees data is preserved even if browser quota is constrained.
  * If quota is reached (e.g. from large base64 thumbnails), it saves a lightweight payload
  * preserving all project details (title, links, descriptions, tags, order, roles) without crashing.
