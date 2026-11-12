@@ -42,7 +42,7 @@ const CERTIFICATES_STORAGE_KEY = 'rg_portfolio_certificates';
  * returning visitor would otherwise keep seeing stale content forever. Bump this
  * whenever defaultData.ts or the Firestore content changes in a deploy.
  */
-const CONTENT_VERSION = '2026-11-12';
+const CONTENT_VERSION = '2026-11-12b';
 const CONTENT_VERSION_KEY = 'rg_portfolio_content_version';
 
 (function invalidateStaleContentCache() {
@@ -183,6 +183,21 @@ export async function updatePortfolioProfile(profile: PortfolioProfile): Promise
   await syncToFirestore(() => setDoc(docRef, updated, { merge: true }), OperationType.WRITE, PORTFOLIO_DOC, 'portfolio profile');
 }
 
+// Fill a stored project's missing demo fields from its default, never overwriting
+// values the owner set. Returns true if anything changed.
+function fillMissingDemo(target: ProjectItem, def: ProjectItem): boolean {
+  let changed = false;
+  if (!target.demoUrl && def.demoUrl) {
+    target.demoUrl = def.demoUrl;
+    changed = true;
+  }
+  if (!target.demoNote && def.demoNote) {
+    target.demoNote = def.demoNote;
+    changed = true;
+  }
+  return changed;
+}
+
 // Fetch Projects
 export async function getProjects(): Promise<ProjectItem[]> {
   // 1. Check localStorage first
@@ -204,6 +219,7 @@ export async function getProjects(): Promise<ProjectItem[]> {
               parsed[existingIdx].link = def.link;
               changed = true;
             }
+            if (fillMissingDemo(parsed[existingIdx], def)) changed = true;
           }
         }
         if (changed) {
@@ -230,8 +246,11 @@ export async function getProjects(): Promise<ProjectItem[]> {
         const existingIdx = items.findIndex((it) => it.id === def.id);
         if (existingIdx === -1) {
           items.push(def);
-        } else if (!items[existingIdx].link && def.link) {
-          items[existingIdx].link = def.link;
+        } else {
+          if (!items[existingIdx].link && def.link) {
+            items[existingIdx].link = def.link;
+          }
+          fillMissingDemo(items[existingIdx], def);
         }
       }
       const sorted = items.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));

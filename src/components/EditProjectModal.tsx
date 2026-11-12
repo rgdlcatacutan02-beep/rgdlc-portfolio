@@ -292,9 +292,32 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
             />
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="font-semibold text-slate-300">Live Demo URL</label>
+              <input
+                type="url"
+                placeholder="https://your-app.vercel.app"
+                value={formData.demoUrl || ''}
+                onChange={(e) => setFormData({ ...formData, demoUrl: e.target.value })}
+                className="w-full rounded-xl border border-slate-800 bg-slate-950 p-2.5 text-slate-100 focus:border-cyan-500 focus:outline-none"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="font-semibold text-slate-300">Demo Login Hint</label>
+              <input
+                type="text"
+                placeholder="e.g. 1-click demo login on the sign-in page"
+                value={formData.demoNote || ''}
+                onChange={(e) => setFormData({ ...formData, demoNote: e.target.value })}
+                className="w-full rounded-xl border border-slate-800 bg-slate-950 p-2.5 text-slate-100 focus:border-cyan-500 focus:outline-none"
+              />
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1 sm:col-span-1">
-              <label className="font-semibold text-slate-300">Project Link</label>
+              <label className="font-semibold text-slate-300">GitHub / Project Link</label>
               <input
                 type="url"
                 placeholder="https://..."

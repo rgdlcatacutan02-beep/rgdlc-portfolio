@@ -450,6 +450,18 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         <ArrowUpRight className="w-3.5 h-3.5" />
                       </button>
 
+                      {project.demoUrl && (
+                        <a
+                          href={sanitizeUrl(project.demoUrl)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 rounded-full bg-[#004643] dark:bg-[#028090] px-2.5 py-1 text-xs font-bold text-white hover:bg-[#028090] dark:hover:bg-[#2dd4bf] dark:hover:text-[#070b14] hover:-translate-y-0.5 transition-all duration-200 ml-2"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                          <span>Live Demo</span>
+                        </a>
+                      )}
+
                       {project.link && (
                         <a
                           href={sanitizeUrl(project.link)}
@@ -634,9 +646,20 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
             {/* Modal Footer */}
             <div className="px-6 py-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 gap-3 flex-wrap">
               <span className="text-xs font-mono-code text-slate-400 dark:text-slate-500">
-                Regie De Leon Catacutan Portfolio
+                {activeModalProject.demoNote || 'Regie De Leon Catacutan Portfolio'}
               </span>
               <div className="flex items-center gap-2">
+                {activeModalProject.demoUrl && (
+                  <a
+                    href={sanitizeUrl(activeModalProject.demoUrl)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#004643] dark:bg-[#028090] hover:bg-[#028090] text-white text-xs font-bold transition-colors shadow-sm"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Live Demo</span>
+                  </a>
+                )}
                 {activeModalProject.link && (
                   <a
                     href={sanitizeUrl(activeModalProject.link)}
