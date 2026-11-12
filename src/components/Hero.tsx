@@ -284,7 +284,7 @@ export const Hero: React.FC<HeroProps> = ({
                     </p>
                     <p className="pl-4">
                       <span className="text-sky-300">degree</span>:{' '}
-                      <span className="text-emerald-300">"BS Computer Engineering (Cum Laude)"</span>,
+                      <span className="text-emerald-300">"BS Computer Engineering"</span>,
                     </p>
                     <p className="pl-4">
                       <span className="text-sky-300">eligibility</span>:{' '}
