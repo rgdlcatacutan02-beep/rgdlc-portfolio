@@ -28,7 +28,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
     {
       title: 'Infrastructure & System Reliability',
       description:
-        'Ensuring 99.9% operational availability across network switches, enterprise junket servers, and store workstations through systematic monitoring and failover protocols.',
+        'Keeping network switches, servers, POS terminals, and workstations available through proactive monitoring, fast troubleshooting, and preventive maintenance.',
       icon: Server,
     },
     {
@@ -52,10 +52,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
   ];
 
   const standards = [
-    'Strict type safety and component modularity across software codebases',
-    'Proactive network diagnostic workflows reducing downtime by up to 35%',
-    'Hardware telemetry integration with real-time alerting systems',
-    'Continuous operational uptime focus for critical business services',
+    'Hands-on network, server, POS, and workstation support in live business environments',
+    '2+ years of remote work with a US-based client across time zones',
+    'Type-safe, modular React + TypeScript codebases with cloud backends',
+    'Clear documentation, ticket tracking, and proactive communication',
   ];
 
   return (
@@ -99,7 +99,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
                 <span>Core Discipline &amp; Philosophy</span>
               </div>
               <h3 className="text-2xl font-bold text-[#004643] dark:text-white font-['Space_Grotesk'] leading-snug">
-                {profile.title ? `Bridging Physical Hardware & ${profile.title}` : 'Bridging Physical Hardware & Scalable Software'}
+                I keep systems running — and build the ones businesses run on
               </h3>
               {profile.summary ? (
                 <div className="space-y-3">
@@ -155,7 +155,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
 
                   <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-1 text-[11px] font-mono-code text-[#028090] dark:text-[#2dd4bf] font-semibold">
                     <Zap className="w-3 h-3" />
-                    <span>Production Standard</span>
+                    <span>Core Strength</span>
                   </div>
                 </div>
               );

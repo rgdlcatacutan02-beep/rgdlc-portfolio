@@ -7,7 +7,7 @@ export const defaultCivilServiceEligibility: CivilServiceEligibility = {
   honorTitle: 'Cum Laude (Bachelor of Science in Computer Engineering)',
   institution: 'Pampanga State Agricultural University (PSAU)',
   dateConferred: '2025',
-  certificateNo: 'CSC-PD907-VERIFIED',
+  certificateNo: '',
   issuingAgency: 'Civil Service Commission (CSC), Republic of the Philippines',
   certificateUrl: '',
   description:
@@ -17,19 +17,19 @@ export const defaultCivilServiceEligibility: CivilServiceEligibility = {
 
 export const defaultProfile: PortfolioProfile = {
   fullName: 'Regie De Leon Catacutan',
-  title: 'Computer Engineer & IT Professional',
+  title: 'Network & IT Support Engineer | Full-Stack Web Developer',
   email: 'rgdlcatacutan02@gmail.com',
   phone: '0981-5731-759',
   location: 'Magalang, Pampanga, Philippines',
   summary:
-    'Dedicated IT professional with hands-on experience in Network engineering, IT support, server maintenance, and infrastructure management. Proficient in troubleshooting technical issues, supporting business operations, maintaining network and surveillance systems, and developing websites using AI-assisted tools. Strong analytical and problem-solving skills with a passion for leveraging technology to improve operational efficiency and user experience.',
+    'I keep systems running — and I build the ones businesses run on. I\'m a Computer Engineering graduate (Cum Laude) working as a Network Engineer, where I monitor network infrastructure and server health, support workstations and users, and resolve connectivity issues before they become downtime. Before that, I supported servers, POS systems, and the store network as an IT Specialist at Robinsons Supermarket, and I spent 2+ years working remotely for a US-based client.\nOn the development side, I build full-stack business systems with React, TypeScript, Firebase, Node.js, PHP, and MySQL. I\'m open to remote roles in IT Support, Systems/NOC Support, and Web Development.',
   cvUrl: '/Regie_De_Leon_Catacutan_CV.pdf',
   cvFileName: 'Regie_De_Leon_Catacutan_CV.pdf',
   cvFileSize: '304 KB',
   cvUpdatedAt: new Date().toISOString(),
   civilServiceEligibility: defaultCivilServiceEligibility,
   github: 'https://github.com/rgdlcatacutan02-beep',
-  linkedin: 'https://linkedin.com',
+  linkedin: 'https://www.linkedin.com/in/regie-catacutan-aa8553373',
   updatedAt: new Date().toISOString(),
 };
 
@@ -47,8 +47,8 @@ export const defaultProjects: ProjectItem[] = [
       'Vehicle Inventory: Advanced multi-criteria filtering by make, model, price, mileage, body style, fuel type, and transmission\nFinancing Calculator: Real-time calculation engine for loan principal, down-payment, interest rates, and monthly amortization\nTrade-In & Appraisal: Multi-step vehicle appraisal workflows with Cloud Firestore persistence and automated WhatsApp lead routing\nTest Drive Booking: Online scheduling system for vehicle test drives and showroom consultations\nAdmin Dashboard: Secure RBAC authentication with complete vehicle inventory CRUD operations\nLead Management Pipeline: Centralized tracking dashboard for financing, trade-in, and customer contact inquiries\nDealership Business Portal: Dynamic management for dealership info, operating hours, WhatsApp routing, and loan parameters\nReal-time Cloud Sync: Low-latency Firestore synchronization for instant vehicle catalog and lead updates',
     tags: 'React, TypeScript, Tailwind CSS, Node.js, Express, Firebase, Cloud Firestore, Firebase Auth, Cloud Storage, Vite, Lucide React, Motion',
     featured: 'true',
-    link: 'https://github.com/rgdlcatacutan02-beep/dunks-auto-sales',
-    order: '1',
+    link: '',
+    order: '5',
   },
   {
     id: 'wellpet-vetcore-pro',
@@ -64,7 +64,7 @@ export const defaultProjects: ProjectItem[] = [
     tags: 'React, TypeScript, Tailwind CSS, Context API, Custom Hooks, Lucide React, Responsive UI, EMR, Healthtech, POS, Role-Based Access Control',
     featured: 'true',
     link: 'https://github.com/rgdlcatacutan02-beep/veterinary-clinic-management-system',
-    order: '2',
+    order: '1',
   },
   {
     id: 'arcforge',
@@ -80,7 +80,7 @@ export const defaultProjects: ProjectItem[] = [
     tags: 'Next.js 15, React 19, TypeScript, Tailwind CSS, Zustand, Firebase Firestore, Raspberry Pi 4B, ESP32-CAM, IoT Sensors, REST API, Solar MPPT',
     featured: 'true',
     link: 'https://github.com/rgdlcatacutan02-beep/ARCforge',
-    order: '3',
+    order: '2',
   },
   {
     id: 'coffeegarage-pos',
@@ -96,7 +96,7 @@ export const defaultProjects: ProjectItem[] = [
     tags: 'React 19, TypeScript, Tailwind CSS, Firebase Firestore, Google Gemini API, Recharts, POS, KDS, Vite, Framer Motion, QR Code',
     featured: 'true',
     link: 'https://github.com/rgdlcatacutan02-beep/CoffeeGarage-POS-system',
-    order: '4',
+    order: '3',
   },
   {
     id: 'itrs-hub',
@@ -112,7 +112,7 @@ export const defaultProjects: ProjectItem[] = [
     tags: 'React 19, TypeScript, Vite, Tailwind CSS, Node.js, Express, REST API, RBAC, IT Operations, Systems Administration, Glassmorphism',
     featured: 'true',
     link: 'https://github.com/rgdlcatacutan02-beep/ITRS-hub',
-    order: '5',
+    order: '4',
   },
   {
     id: 'iot-fire-detection',
@@ -127,7 +127,7 @@ export const defaultProjects: ProjectItem[] = [
       'Developed a fire detection system using Raspberry Pi and high-sensitivity sensors\nIntegrated live video streaming and automated GSM SMS alert features\nDesigned a responsive web interface for real-time monitoring and emergency notifications\nOptimized sensor thresholds to minimize false alarms in challenging environments',
     tags: 'Raspberry Pi, Python, IoT Sensors, GSM Module, Video Streaming, Hardware Integration',
     featured: 'true',
-    link: 'https://github.com/rgdlcatacutan02-beep/iot-fire-detection-system',
+    link: '',
     order: '6',
   },
   {
@@ -143,23 +143,23 @@ export const defaultProjects: ProjectItem[] = [
       'Engineered an expressive ChatGPT-Powered OLED Eyed AI Assistant for Raspberry Pi Zero\nCreated dynamic micro-animations for emotional states and interaction feedback\nIntegrated OpenAI API for voice and prompt reasoning\nEngineered lightweight embedded python services for smooth low-power performance',
     tags: 'Raspberry Pi Zero, OpenAI / ChatGPT, OLED Display, Python, Speech Synthesis, Embedded Linux',
     featured: 'true',
-    link: 'https://github.com/rgdlcatacutan02-beep/rai-raspberry-ai-assistant',
+    link: '',
     order: '7',
   },
   {
     id: 'network-monitor-dashboard',
-    title: 'Enterprise Store & Network Monitoring Setup',
-    subtitle: 'Mission-Critical Retail Infrastructure & POS Diagnostics Suite',
+    title: 'Retail Store & Network Support Operations',
+    subtitle: 'Case Study: Keeping a Supermarket\'s Servers, POS, and Network Running',
     category: 'Infrastructure & Support',
     year: '2025-2026',
-    role: 'Network Engineer & Systems Administrator',
+    role: 'IT Specialist – Store Support / Network Engineer',
     description:
-      'Infrastructure diagnostics and proactive server/workstation monitoring workflow implemented for store and POS environments ensuring 99.9% operational uptime.',
+      'A case study from my on-site IT work: monitoring servers and network health, supporting POS terminals and workstations, and resolving hardware, software, and connectivity issues so store operations keep running.',
     highlights:
-      'Maintained POS server availability, system health, and failover network routing\nStandardized remote diagnostics toolchains reducing average ticket resolution time by 35%\nConfigured redundant surveillance CCTV backup systems and network switches',
-    tags: 'Network Diagnostics, POS Systems, Remote Support Tools, Server Maintenance, CCTV',
+      'Supported store servers, POS systems, workstations, and network infrastructure\nTroubleshot hardware, software, and connectivity issues to keep downtime minimal\nPerformed preventive maintenance on IT equipment and assisted with CCTV systems\nWorked with ticketing systems and remote support tools for issue tracking and resolution',
+    tags: 'Network Diagnostics, POS Systems, Remote Support Tools, Server Maintenance, CCTV, Ticketing',
     featured: 'false',
-    link: 'https://github.com/rgdlcatacutan02-beep/enterprise-store-network-monitoring',
+    link: '',
     order: '8',
   },
 ];
@@ -168,32 +168,42 @@ export const defaultExperiences: ExperienceItem[] = [
   {
     id: 'exp-3core',
     role: 'Network Engineer',
-    company: '3Core LeadersTech',
-    period: '2026 - Present',
+    company: '3core Leaderstech Corp. · Clark, Pampanga',
+    period: 'Mar 2026 - Present',
     responsibilities:
-      'Maintained and monitored network infrastructure to support uninterrupted junket operations.\nMonitored server availability, performance, and system health to ensure operational stability.\nProvided workstation support, including troubleshooting, configuration, and user assistance.\nDiagnosed and resolved network connectivity and technical issues to minimize service disruptions.\nProvided support for server build and maintenance activities and assisted in maintaining CCTV camera systems to support business operations.',
+      'Maintain and monitor network infrastructure to support uninterrupted business operations.\nMonitor server availability, performance, and system health to ensure operational stability.\nProvide workstation support, including troubleshooting, configuration, and user assistance.\nDiagnose and resolve network connectivity and technical issues to minimize service disruptions.\nSupport server build and maintenance activities and assist in maintaining CCTV camera systems.',
     tools: 'Network Infrastructure, Server Diagnostics, Workstation Support, CCTV Systems, Switch Configuration',
     order: '1',
   },
   {
     id: 'exp-robinsons',
     role: 'IT Specialist – Store Support',
-    company: 'Robinsons Supermarket',
-    period: '2025 - 2026',
+    company: 'Robinsons Supermarket · City of San Fernando',
+    period: 'Sep 2025 - Mar 2026',
     responsibilities:
-      'Supported retail servers, POS systems, and store network infrastructure across multiple branches.\nTroubleshoot hardware, software, and connectivity issues promptly to ensure seamless customer checkout.\nMaintained IT equipment and ensured minimal downtime for mission-critical store operations.\nAdministered ticketing systems and executed preventive maintenance procedures.',
+      'Supported store servers, POS systems, workstations, and network infrastructure.\nTroubleshot hardware, software, and connectivity issues to keep checkout and store operations running.\nMaintained IT equipment to keep store downtime minimal.\nUsed ticketing systems and performed preventive maintenance.',
     tools: 'POS Systems, Server Maintenance, Hardware Troubleshooting, Remote Diagnostic Tools, Ticketing Systems',
     order: '2',
   },
   {
+    id: 'exp-iphoenix',
+    role: 'Survey Design Engineer Intern',
+    company: 'I-Phoenix Corporation',
+    period: 'Jan 2025 - May 2025',
+    responsibilities:
+      'Assisted the engineering team with pole plotting for telecommunications infrastructure.\nUsed QGIS, CAD, and Google Earth for spatial data management and design.\nManaged and formatted large CSV datasets for geospatial projects.\nEdited and developed As-Built plans in CAD for project documentation.',
+    tools: 'QGIS, AutoCAD, Google Earth, CSV Data Management',
+    order: '3',
+  },
+  {
     id: 'exp-freelance',
-    role: 'Social Media Manager & Web Development',
-    company: 'Freelance & Client Services',
+    role: 'Virtual Assistant, Social Media Manager & Web Developer',
+    company: 'Remote · US-based client (Lance Dynamic Credit Repair) & Freelance',
     period: '2022 - 2024',
     responsibilities:
-      'Created and managed engaging digital and social media content for diverse commercial clients.\nSpecialized in high-converting short-form video content, including Instagram Reels and TikToks.\nDeveloped analytical strategies to drive client audience engagement and sustained follower growth.\nDesigned, developed, and maintained client websites while utilizing AI-assisted tools to streamline development processes.',
-    tools: 'Web Development, Canva, Photoshop, AI Development Tools, Video Editing, Analytics',
-    order: '3',
+      'Worked remotely for a US-based client for 2+ years across time zones.\nCreated and managed social media content for multiple clients, specializing in short-form video (Reels, TikTok).\nDeveloped strategies to increase audience engagement and follower growth.\nDesigned, built, and maintained client websites using AI-assisted development tools.',
+    tools: 'Remote Collaboration, Web Development, Canva, Photoshop, Video Editing, AI Development Tools',
+    order: '4',
   },
 ];
 
@@ -253,7 +263,7 @@ export const defaultSkillCategories: SkillCategory[] = [
   {
     id: 'skill-web',
     title: 'Web & Full-Stack Development',
-    skills: ['React', 'TypeScript', 'Tailwind CSS', 'Node.js & Express', 'Firebase & Firestore', 'REST APIs', 'Vite'],
+    skills: ['React', 'TypeScript', 'Next.js', 'Tailwind CSS', 'Node.js & Express', 'Firebase & Firestore', 'PHP & MySQL', 'REST APIs', 'Vite'],
     order: '1',
   },
   {
@@ -271,7 +281,7 @@ export const defaultSkillCategories: SkillCategory[] = [
   {
     id: 'skill-network',
     title: 'Network & Systems',
-    skills: ['Network Infrastructure', 'Server Maintenance', 'POS Systems Support', 'CCTV & Surveillance', 'Diagnostics & Troubleshooting'],
+    skills: ['Network Infrastructure', 'TCP/IP', 'Windows Server', 'Server Maintenance', 'Help Desk & IT Support', 'POS Systems Support', 'CCTV & Surveillance', 'Diagnostics & Troubleshooting'],
     order: '4',
   },
   {
@@ -303,7 +313,7 @@ export const defaultCertificates: CertificateItem[] = [
     issuingOrganization: 'Civil Service Commission (CSC), Republic of the Philippines',
     issueDate: '2025',
     expirationDate: 'Permanent (Does not expire)',
-    credentialId: 'CSC-PD907-VERIFIED',
+    credentialId: '',
     credentialUrl: '',
     description:
       'Conferred First and Second Level Career Service Eligibility pursuant to Presidential Decree No. 907 by virtue of graduating Cum Laude with a Bachelor of Science in Computer Engineering. Fully qualifies for scientific, technical, and executive appointments in the Philippine Civil Service without examination requirement.',
@@ -317,7 +327,7 @@ export const defaultCertificates: CertificateItem[] = [
     issuingOrganization: 'Pampanga State Agricultural University (PSAU)',
     issueDate: '2025',
     expirationDate: 'Lifetime Recognition',
-    credentialId: 'PSAU-PIONEER-2025',
+    credentialId: '',
     credentialUrl: '',
     description:
       'Special highest institutional distinction awarded to pioneer graduates of the Bachelor of Science in Computer Engineering program for academic and leadership excellence.',
@@ -331,7 +341,7 @@ export const defaultCertificates: CertificateItem[] = [
     issuingOrganization: 'Pampanga State Agricultural University (PSAU)',
     issueDate: '2025',
     expirationDate: 'Lifetime Recognition',
-    credentialId: 'PSAU-CUMLAUDE-2025',
+    credentialId: '',
     credentialUrl: '',
     description:
       'Conferred for continuous scholastic excellence across the four-year Bachelor of Science in Computer Engineering curriculum.',
@@ -345,24 +355,24 @@ export const defaultCertificates: CertificateItem[] = [
     issuingOrganization: 'Professional Tech Immersion Program',
     issueDate: 'May 08, 2025',
     expirationDate: 'Lifetime',
-    credentialId: 'CERT-DEV-2025-05',
+    credentialId: '',
     credentialUrl: '',
     description:
-      'Certification verifying mastery in modern front-end architecture, responsive design fundamentals, component patterns, and asynchronous JavaScript.',
+      'Certificate of completion for training in HTML, CSS, and JavaScript: responsive design fundamentals, component patterns, and asynchronous JavaScript.',
     featured: false,
     order: '4',
   },
   {
     id: 'cert-emerging-tech',
-    title: 'Emerging Technologies & Enterprise Cloud Infrastructure',
+    title: 'Emerging Technologies: Exploring Innovations for the Future (Training & Site Visit)',
     category: 'Technical & IT Certifications',
     issuingOrganization: 'Industry Technical Workshop & Site Inspection',
     issueDate: 'March 28, 2025',
     expirationDate: 'Lifetime',
-    credentialId: 'CERT-EMERG-2025-03',
+    credentialId: '',
     credentialUrl: '',
     description:
-      'Enterprise infrastructure architecture, server monitoring, remote diagnostics, and modern cloud deployment standards.',
+      'Training and on-site visit covering emerging enterprise technologies, cloud computing trends, and infrastructure operations.',
     featured: false,
     order: '5',
   },
@@ -373,7 +383,7 @@ export const defaultCertificates: CertificateItem[] = [
     issuingOrganization: 'Tarlac National High School - Main',
     issueDate: '2021',
     expirationDate: 'Lifetime Recognition',
-    credentialId: 'TNHS-STEM-HONORS',
+    credentialId: '',
     credentialUrl: '',
     description:
       'Graduated with High Honors in the Science, Technology, Engineering, and Mathematics (STEM) academic strand.',

@@ -102,7 +102,7 @@ export const SeminarsSection: React.FC<SeminarsSectionProps> = ({
 
               <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
                 <CheckCircle className="h-4 w-4 text-[#028090] dark:text-[#2dd4bf]" />
-                <span>Verified Attendance &amp; Certification</span>
+                <span>Certificate of Attendance</span>
               </div>
             </div>
           ))}

@@ -55,7 +55,7 @@ export const Hero: React.FC<HeroProps> = ({
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
               </span>
-              <span className="tracking-wide">AVAILABLE FOR WORK</span>
+              <span className="tracking-wide">OPEN TO REMOTE ROLES</span>
               <span className="text-slate-300 dark:text-slate-700">|</span>
               <span className="text-slate-600 dark:text-slate-300 font-sans flex items-center gap-1">
                 <MapPin className="w-3 h-3 text-[#028090] dark:text-[#2dd4bf]" />
@@ -151,7 +151,7 @@ export const Hero: React.FC<HeroProps> = ({
 
             {/* Concise Bio / Engineering Mission */}
             <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed font-normal pt-1">
-              {profile.summary}
+              Network &amp; IT Support Engineer who also builds full-stack business systems. I monitor networks and servers, support users and POS environments, and ship React + TypeScript apps — now open to remote IT Support, NOC, and Web Development roles.
             </p>
 
             {/* CTA Buttons and Social Links */}
@@ -291,14 +291,17 @@ export const Hero: React.FC<HeroProps> = ({
                     <p className="pl-4">
                       <span className="text-sky-300">roles</span>:{' '}
                       <span className="text-amber-300">[</span>
-                      <span className="text-emerald-300">"Network Engineer"</span>,{' '}
-                      <span className="text-emerald-300">"Systems Admin"</span>,{' '}
-                      <span className="text-emerald-300">"Full-Stack Dev"</span>
+                      <span className="text-emerald-300">"Network &amp; IT Support Engineer"</span>,{' '}
+                      <span className="text-emerald-300">"Full-Stack Web Developer"</span>
                       <span className="text-amber-300">]</span>,
                     </p>
                     <p className="pl-4">
                       <span className="text-sky-300">location</span>:{' '}
-                      <span className="text-emerald-300">"Pampanga, Philippines"</span>,
+                      <span className="text-emerald-300">"Pampanga, Philippines (GMT+8)"</span>,
+                    </p>
+                    <p className="pl-4">
+                      <span className="text-sky-300">workSetup</span>:{' '}
+                      <span className="text-emerald-300">"Remote / WFH"</span>,
                     </p>
                     <p className="pl-4">
                       <span className="text-sky-300">availableForHire</span>:{' '}
@@ -341,8 +344,11 @@ export const Hero: React.FC<HeroProps> = ({
                       <span className="text-amber-300">]</span>,
                     </p>
                     <p className="pl-4">
-                      <span className="text-sky-300">targetUptime</span>:{' '}
-                      <span className="text-cyan-400 font-bold">0.999</span>
+                      <span className="text-sky-300">databases</span>:{' '}
+                      <span className="text-amber-300">[</span>
+                      <span className="text-emerald-300">"MySQL"</span>,{' '}
+                      <span className="text-emerald-300">"Firestore"</span>
+                      <span className="text-amber-300">]</span>
                     </p>
                     <p>&#125;;</p>
                   </div>
@@ -407,9 +413,9 @@ export const Hero: React.FC<HeroProps> = ({
               <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 shadow-sm hover:border-[#004643]/30 dark:hover:border-[#028090]/50 transition-colors">
                 <div className="flex items-center gap-2 text-[#004643] dark:text-white">
                   <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                  <span className="text-base sm:text-lg font-bold font-['Space_Grotesk']">99.9%</span>
+                  <span className="text-base sm:text-lg font-bold font-['Space_Grotesk']">2+ yrs</span>
                 </div>
-                <span className="block text-[11px] font-mono-code text-slate-500 dark:text-slate-400 uppercase mt-0.5">Uptime Focus</span>
+                <span className="block text-[11px] font-mono-code text-slate-500 dark:text-slate-400 uppercase mt-0.5">Remote Work</span>
               </div>
             </div>
 
