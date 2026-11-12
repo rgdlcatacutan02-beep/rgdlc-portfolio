@@ -22,7 +22,7 @@ export const defaultProfile: PortfolioProfile = {
   phone: '0981-5731-759',
   location: 'Magalang, Pampanga, Philippines',
   summary:
-    'I keep systems running — and I build the ones businesses run on. I\'m a Computer Engineering graduate (Cum Laude) working as a Network Engineer, where I monitor network infrastructure and server health, support workstations and users, and resolve connectivity issues before they become downtime. Before that, I supported servers, POS systems, and the store network as an IT Specialist at Robinsons Supermarket, and I spent 2+ years working remotely for a US-based client.\nOn the development side, I build full-stack business systems with React, TypeScript, Firebase, Node.js, PHP, and MySQL. I\'m open to remote roles in IT Support, Systems/NOC Support, and Web Development.',
+    'I keep systems running — and I build the ones businesses run on. I\'m a Computer Engineering graduate working as a Network Engineer, where I monitor network infrastructure and server health, support workstations and users, and resolve connectivity issues before they become downtime. Before that, I supported servers, POS systems, and the store network as an IT Specialist at Robinsons Supermarket, and I spent 2+ years working remotely for a US-based client.\nOn the development side, I build full-stack business systems with React, TypeScript, Firebase, Node.js, PHP, and MySQL. I\'m open to remote roles in IT Support, Systems/NOC Support, and Web Development.',
   cvUrl: '/Regie_De_Leon_Catacutan_CV.pdf',
   cvFileName: 'Regie_De_Leon_Catacutan_CV.pdf',
   cvFileSize: '304 KB',
