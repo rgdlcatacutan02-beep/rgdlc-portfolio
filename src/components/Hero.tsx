@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   MapPin,
   ArrowRight,
-  Sparkles,
   Edit2,
   Camera,
   FolderGit2,
@@ -66,7 +65,6 @@ export const Hero: React.FC<HeroProps> = ({
             {/* Greeting & Name */}
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-xs font-mono-code uppercase tracking-widest text-[#028090] dark:text-[#2dd4bf] font-bold">
-                <Sparkles className="w-3.5 h-3.5 text-[#f02a2d]" />
                 <span>// HELLO WORLD — MEET THE ENGINEER</span>
               </div>
 

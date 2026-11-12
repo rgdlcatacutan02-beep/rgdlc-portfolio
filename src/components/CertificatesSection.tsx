@@ -14,7 +14,6 @@ import {
   Filter,
   CheckCircle2,
   Building,
-  Sparkles,
   Layers,
   FileText,
 } from 'lucide-react';
@@ -227,7 +226,6 @@ export const CertificatesSection: React.FC<CertificatesSectionProps> = ({
 
                         {cert.featured && (
                           <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-mono-code font-bold text-amber-700 dark:text-amber-300">
-                            <Sparkles className="h-2.5 w-2.5" />
                             <span>Featured</span>
                           </span>
                         )}

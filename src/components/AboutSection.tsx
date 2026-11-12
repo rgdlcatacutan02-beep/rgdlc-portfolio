@@ -8,7 +8,6 @@ import {
   Workflow,
   CheckCircle2,
   Layers,
-  Sparkles,
   Zap,
 } from 'lucide-react';
 import { PortfolioProfile } from '../types';
@@ -95,7 +94,6 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
           <div className="lg:col-span-5 flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-[#fffffe] dark:bg-slate-900/60 p-6 sm:p-8 shadow-sm space-y-6">
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-xs font-mono-code uppercase font-bold text-[#028090] dark:text-[#2dd4bf]">
-                <Sparkles className="w-4 h-4 text-[#f02a2d]" />
                 <span>Core Discipline &amp; Philosophy</span>
               </div>
               <h3 className="text-2xl font-bold text-[#004643] dark:text-white font-['Space_Grotesk'] leading-snug">
