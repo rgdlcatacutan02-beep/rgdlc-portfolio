@@ -64,6 +64,8 @@ export const defaultProjects: ProjectItem[] = [
     tags: 'React, TypeScript, Tailwind CSS, Context API, Custom Hooks, Lucide React, Responsive UI, EMR, Healthtech, POS, Role-Based Access Control',
     featured: 'true',
     link: 'https://github.com/rgdlcatacutan02-beep/veterinary-clinic-management-system',
+    demoUrl: 'https://wellpet-vetcore-pro.vercel.app',
+    demoNote: 'Demo: 1-click login as Admin, Vet, Staff, or Pet Owner on the sign-in page',
     order: '1',
   },
   {
@@ -80,6 +82,8 @@ export const defaultProjects: ProjectItem[] = [
     tags: 'Next.js 15, React 19, TypeScript, Tailwind CSS, Zustand, Firebase Firestore, Raspberry Pi 4B, ESP32-CAM, IoT Sensors, REST API, Solar MPPT',
     featured: 'true',
     link: 'https://github.com/rgdlcatacutan02-beep/ARCforge',
+    demoUrl: 'https://arcforge-peach.vercel.app',
+    demoNote: 'Demo: opens straight into the live dashboard',
     order: '2',
   },
   {
@@ -96,6 +100,8 @@ export const defaultProjects: ProjectItem[] = [
     tags: 'React 19, TypeScript, Tailwind CSS, Firebase Firestore, Google Gemini API, Recharts, POS, KDS, Vite, Framer Motion, QR Code',
     featured: 'true',
     link: 'https://github.com/rgdlcatacutan02-beep/CoffeeGarage-POS-system',
+    demoUrl: 'https://coffeegarage-pos.vercel.app',
+    demoNote: 'Demo login: admin / admin123 (shown on the sign-in page)',
     order: '3',
   },
   {
@@ -112,6 +118,8 @@ export const defaultProjects: ProjectItem[] = [
     tags: 'React 19, TypeScript, Vite, Tailwind CSS, Node.js, Express, REST API, RBAC, IT Operations, Systems Administration, Glassmorphism',
     featured: 'true',
     link: 'https://github.com/rgdlcatacutan02-beep/ITRS-hub',
+    demoUrl: 'https://itrs-hub.vercel.app',
+    demoNote: 'Demo: click any quick test account on the sign-in page',
     order: '4',
   },
   {

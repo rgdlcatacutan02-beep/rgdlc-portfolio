@@ -42,6 +42,8 @@ export interface ProjectItem {
   tags: string; // comma-separated
   featured?: string; // 'true' | 'false'
   link?: string;
+  demoUrl?: string; // live deployment URL
+  demoNote?: string; // e.g. demo login hint shown in the project modal
   imageUrl?: string;
   order?: string;
 }
