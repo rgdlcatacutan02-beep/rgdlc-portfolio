@@ -184,3 +184,11 @@ h1, h2, h3, h4, h5, h6 {
     color: #334155 !important;
   }
 }
+
+/* Horizontal chip rows that scroll by swipe without showing a scrollbar */
+.no-scrollbar {
+  scrollbar-width: none !important;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
