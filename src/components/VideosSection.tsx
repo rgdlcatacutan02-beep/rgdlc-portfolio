@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Clapperboard, Play, X, ChevronLeft, ChevronRight, Film, Wrench } from 'lucide-react';
+import { Clapperboard, Play, X, ChevronLeft, ChevronRight, Film, Wrench, Folder, FolderOpen } from 'lucide-react';
 import { VideoItem } from '../types';
 import { VIDEO_TYPES } from '../videoData';
 
@@ -250,18 +250,18 @@ export const VideosSection: React.FC<VideosSectionProps> = ({ videos }) => {
   const tabs = useMemo(() => {
     const counts = new Map<string, number>();
     sorted.forEach((v) => v.types.forEach((t) => counts.set(t, (counts.get(t) || 0) + 1)));
-    const known = VIDEO_TYPES.filter((t) => counts.has(t.id)).map((t) => ({ ...t, count: counts.get(t.id)! }));
+    // Every type folder is always shown (even with 0 videos) so new videos only need to be added to the list.
+    const known = VIDEO_TYPES.map((t) => ({ ...t, count: counts.get(t.id) || 0 }));
     const custom = [...counts.keys()]
       .filter((t) => !VIDEO_TYPES.some((k) => k.id === t))
       .map((t) => ({ id: t, label: t, hint: '', count: counts.get(t)! }));
-    return [{ id: 'All', label: 'All', hint: 'Every edit, newest favourites first', count: sorted.length }, ...known, ...custom];
+    return [{ id: 'All', label: 'All', hint: 'Every edit, newest favourites first. Pick a type to filter.', count: sorted.length }, ...known, ...custom];
   }, [sorted]);
 
   const visible = activeType === 'All' ? sorted : sorted.filter((v) => v.types.includes(activeType));
   const openIndex = openId ? visible.findIndex((v) => v.id === openId) : -1;
   const openVideo = openIndex >= 0 ? visible[openIndex] : null;
 
-  if (videos.length === 0) return null;
 
   const activeHint = tabs.find((t) => t.id === activeType)?.hint;
 
@@ -283,7 +283,7 @@ export const VideosSection: React.FC<VideosSectionProps> = ({ videos }) => {
 
         {/* Type filter tabs */}
         <div
-          className="-mx-4 px-4 md:mx-0 md:px-0 overflow-x-auto md:overflow-visible pb-2 mb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="-mx-4 px-4 md:mx-0 md:px-0 overflow-x-auto md:overflow-visible pb-2 mb-2 no-scrollbar"
           role="tablist"
           aria-label="Filter videos by type"
         >
@@ -311,14 +311,44 @@ export const VideosSection: React.FC<VideosSectionProps> = ({ videos }) => {
         </div>
         {activeHint && <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">{activeHint}</p>}
 
-        {/* Grid: vertical videos take one column, wide videos take two */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 grid-flow-row-dense items-start">
-          {visible.map((video) => (
-            <div key={video.id} className={isVertical(video) ? 'col-span-1' : 'col-span-2'}>
-              <VideoCard video={video} onOpen={() => setOpenId(video.id)} />
-            </div>
-          ))}
-        </div>
+        {visible.length > 0 ? (
+          /* Grid: vertical videos take one column, wide videos take two */
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 grid-flow-row-dense items-start">
+            {visible.map((video) => (
+              <div key={video.id} className={isVertical(video) ? 'col-span-1' : 'col-span-2'}>
+                <VideoCard video={video} onOpen={() => setOpenId(video.id)} />
+              </div>
+            ))}
+          </div>
+        ) : activeType === 'All' ? (
+          /* No videos yet: show every type as a folder */
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            {tabs.filter((t) => t.id !== 'All').map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveType(tab.id)}
+                className="group text-left rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 p-4 hover:border-[#028090] hover:-translate-y-0.5 hover:shadow-lg transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#028090]"
+              >
+                <Folder className="h-8 w-8 text-[#028090] dark:text-[#2dd4bf] mb-3 group-hover:hidden" />
+                <FolderOpen className="h-8 w-8 text-[#028090] dark:text-[#2dd4bf] mb-3 hidden group-hover:block" />
+                <p className="text-sm font-bold text-[#004643] dark:text-white">{tab.label}</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">{tab.hint}</p>
+                <p className="mt-2 text-[10px] font-mono-code font-bold uppercase tracking-wider text-slate-400">
+                  {tab.count > 0 ? `${tab.count} video${tab.count === 1 ? '' : 's'}` : 'Coming soon'}
+                </p>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 py-14 px-6 text-center">
+            <FolderOpen className="mx-auto h-10 w-10 text-slate-400 mb-3" />
+            <p className="text-sm font-bold text-[#004643] dark:text-white">
+              {tabs.find((t) => t.id === activeType)?.label} videos coming soon
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">New edits are being added. Check back shortly.</p>
+          </div>
+        )}
       </div>
 
       {openVideo && (

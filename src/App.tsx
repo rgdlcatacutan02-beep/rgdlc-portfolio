@@ -555,7 +555,7 @@ export default function App() {
       <Navbar
         profile={profile}
         onSecretAdminTrigger={() => setIsLoginModalOpen(true)}
-        hasVideos={defaultVideos.length > 0}
+        hasVideos
       />
 
       {/* Admin Action Bar if user is authenticated as owner and edit mode is active */}

@@ -1,9 +1,9 @@
 import { VideoItem } from './types';
 
 /**
- * Video types used as filter tabs, in display order. A tab only appears when at
- * least one video carries that type. Add new types here to control their order;
- * any other type used on a video still gets a tab (after these).
+ * Video types used as filter tabs / folders, in display order. Every type here is
+ * always shown, even with no videos yet (it reads "Coming soon"). Any other type
+ * used on a video also gets a tab, after these.
  */
 export const VIDEO_TYPES: { id: string; label: string; hint: string }[] = [
   { id: 'Short-form', label: 'Short-form', hint: 'Reels, TikTok & YouTube Shorts (under 90s)' },
