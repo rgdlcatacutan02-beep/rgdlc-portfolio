@@ -106,3 +106,23 @@ export interface CertificateItem {
   featured?: boolean;
   order?: string;
 }
+
+/**
+ * A video in the Video Editing portfolio.
+ * `types` drives the filter tabs, so a short UGC ad can be tagged
+ * ['Short-form', 'UGC', 'Ad'] and show up under each of those tabs.
+ */
+export interface VideoItem {
+  id: string;
+  title: string;
+  types: string[]; // values from VIDEO_TYPES (custom values are allowed and get their own tab)
+  description: string; // what I did: cuts, captions, motion graphics, color, sound
+  tools?: string[];
+  videoUrl: string; // /videos/x.mp4 (served from public/), a YouTube link, or a Google Drive link
+  posterUrl?: string; // thumbnail shown before playing
+  aspect: '9:16' | '16:9' | '1:1' | '4:5';
+  duration?: string; // e.g. "0:45"
+  client?: string; // shown only if set
+  featured?: boolean;
+  order?: string;
+}

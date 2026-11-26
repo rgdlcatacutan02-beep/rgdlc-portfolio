@@ -14,6 +14,7 @@ import {
   X,
   Sun,
   Moon,
+  Clapperboard,
 } from 'lucide-react';
 import { PortfolioProfile } from '../types';
 import { useTheme } from '../context/ThemeContext';
@@ -22,9 +23,10 @@ import { triggerPdfDownload } from '../utils/fileUtils';
 interface NavbarProps {
   profile?: PortfolioProfile;
   onSecretAdminTrigger?: () => void;
+  hasVideos?: boolean;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ profile, onSecretAdminTrigger }) => {
+export const Navbar: React.FC<NavbarProps> = ({ profile, onSecretAdminTrigger, hasVideos = false }) => {
   const { isDark, toggleTheme } = useTheme();
   const [activeSection, setActiveSection] = useState<string>('#home');
   const [scrolled, setScrolled] = useState<boolean>(false);
@@ -35,6 +37,7 @@ export const Navbar: React.FC<NavbarProps> = ({ profile, onSecretAdminTrigger })
     { id: 'home', label: 'Home', href: '#home', icon: Home },
     { id: 'about', label: 'About', href: '#about', icon: User },
     { id: 'projects', label: 'Projects', href: '#projects', icon: FolderGit2 },
+    ...(hasVideos ? [{ id: 'videos', label: 'Videos', href: '#videos', icon: Clapperboard }] : []),
     { id: 'experience', label: 'Roadmap', href: '#experience', icon: Briefcase },
     { id: 'skills', label: 'Skills', href: '#skills', icon: Cpu },
     { id: 'certificates', label: 'Certificates', href: '#certificates', icon: Award },

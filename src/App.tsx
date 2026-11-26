@@ -66,6 +66,8 @@ import { AdminBar } from './components/AdminBar';
 import { Hero } from './components/Hero';
 import { AboutSection } from './components/AboutSection';
 import { ProjectsSection } from './components/ProjectsSection';
+import { VideosSection } from './components/VideosSection';
+import { defaultVideos } from './videoData';
 import { ExperienceSection } from './components/ExperienceSection';
 import { EducationSection } from './components/EducationSection';
 import { SkillsSection } from './components/SkillsSection';
@@ -553,6 +555,7 @@ export default function App() {
       <Navbar
         profile={profile}
         onSecretAdminTrigger={() => setIsLoginModalOpen(true)}
+        hasVideos={defaultVideos.length > 0}
       />
 
       {/* Admin Action Bar if user is authenticated as owner and edit mode is active */}
@@ -627,6 +630,8 @@ export default function App() {
           onSetSpotlightProject={handleSetSpotlightProject}
           onSaveOrder={handleSaveAll}
         />
+
+        <VideosSection videos={defaultVideos} />
 
         <ExperienceSection
           experiences={experiences}
